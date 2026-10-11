@@ -1,0 +1,184 @@
+{
+  "model": "uniform recursive leaf attachment",
+  "runs": 32,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31
+  ],
+  "rng": "std::mt19937_64 with explicit rejection sampling",
+  "checkpoints": [
+    {
+      "N": 1000,
+      "runs": 32,
+      "mean_S_over_N": 1.98884375,
+      "sd_S_over_N": 0.042983199549921663,
+      "mean_W": 7.40625,
+      "min_W": 6,
+      "max_W": 10,
+      "mean_W_over_ell": 2.0721130790659665,
+      "mean_recourse": 1.3118118118118118
+    },
+    {
+      "N": 10000,
+      "runs": 32,
+      "mean_S_over_N": 1.9997125,
+      "sd_S_over_N": 0.013840258015495373,
+      "mean_W": 8.59375,
+      "min_W": 8,
+      "max_W": 10,
+      "mean_W_over_ell": 2.0716860313089223,
+      "mean_recourse": 1.3094434443444345
+    },
+    {
+      "N": 100000,
+      "runs": 32,
+      "mean_S_over_N": 1.9992884375,
+      "sd_S_over_N": 0.005156790142774176,
+      "mean_W": 9.75,
+      "min_W": 9,
+      "max_W": 10,
+      "mean_W_over_ell": 2.0693121014191895,
+      "mean_recourse": 1.3079077665776657
+    },
+    {
+      "N": 1000000,
+      "runs": 32,
+      "mean_S_over_N": 1.99980171875,
+      "sd_S_over_N": 0.0012361453676488527,
+      "mean_W": 11.1875,
+      "min_W": 10,
+      "max_W": 13,
+      "mean_W_over_ell": 2.12630918849871,
+      "mean_recourse": 1.3076119638619639
+    }
+  ],
+  "late_updates": {
+    "updates": 16000000,
+    "mean_K": 0.9997019375,
+    "variance_K": 1.192111723658746,
+    "P_K_zero": 0.403721125,
+    "limiting_variance": 1.1926947246463881,
+    "limiting_P_K_zero": 0.4036526376768059,
+    "histogram": {
+      "0": 6459538,
+      "1": 5286214,
+      "2": 2707532,
+      "3": 1065833,
+      "4": 349288,
+      "5": 99282,
+      "6": 25080,
+      "7": 5765,
+      "8": 1205,
+      "9": 220,
+      "10": 37,
+      "11": 5,
+      "12": 1
+    }
+  },
+  "exact_matching_trees_checked": 46234,
+  "raw_exact_checks": [
+    {
+      "old_n": 1,
+      "trees": 1,
+      "sum_K": 1,
+      "sum_U": 1,
+      "sum_2_power_K": 2,
+      "root_flips": 1,
+      "sum_recourse": 1
+    },
+    {
+      "old_n": 2,
+      "trees": 2,
+      "sum_K": 2,
+      "sum_U": 3,
+      "sum_2_power_K": 5,
+      "root_flips": 1,
+      "sum_recourse": 2
+    },
+    {
+      "old_n": 3,
+      "trees": 6,
+      "sum_K": 6,
+      "sum_U": 10,
+      "sum_2_power_K": 16,
+      "root_flips": 2,
+      "sum_recourse": 8
+    },
+    {
+      "old_n": 4,
+      "trees": 24,
+      "sum_K": 24,
+      "sum_U": 42,
+      "sum_2_power_K": 66,
+      "root_flips": 6,
+      "sum_recourse": 28
+    },
+    {
+      "old_n": 5,
+      "trees": 120,
+      "sum_K": 120,
+      "sum_U": 216,
+      "sum_2_power_K": 336,
+      "root_flips": 24,
+      "sum_recourse": 156
+    },
+    {
+      "old_n": 6,
+      "trees": 720,
+      "sum_K": 720,
+      "sum_U": 1320,
+      "sum_2_power_K": 2040,
+      "root_flips": 120,
+      "sum_recourse": 890
+    },
+    {
+      "old_n": 7,
+      "trees": 5040,
+      "sum_K": 5040,
+      "sum_U": 9360,
+      "sum_2_power_K": 14400,
+      "root_flips": 720,
+      "sum_recourse": 6492
+    },
+    {
+      "old_n": 8,
+      "trees": 40320,
+      "sum_K": 40320,
+      "sum_U": 75600,
+      "sum_2_power_K": 115920,
+      "root_flips": 5040,
+      "sum_recourse": 51036
+    }
+  ],
+  "note": "Updates within each run are dependent. SD is across runs, not updates."
+}

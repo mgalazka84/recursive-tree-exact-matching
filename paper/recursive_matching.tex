@@ -1,0 +1,747 @@
+\documentclass[runningheads,envcountsame,orivec]{llncs}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usepackage[hidelinks]{hyperref}
+\urlstyle{same}
+
+\newcommand{\E}{\mathbb E}
+\newcommand{\PP}{\mathbb P}
+\newcommand{\ind}{\mathbf 1}
+\newcommand{\ch}{\operatorname{ch}}
+\newcommand{\parnt}{\operatorname{par}}
+\newcommand{\nil}{\bot}
+\newcommand{\R}{\mathcal R}
+\newcommand{\coef}[2]{[z^{#1}]#2}
+
+\begin{document}
+\title{Exact Matching in Growing Recursive Trees\texorpdfstring{\\}{ }with Constant Expected Update Cost}
+\titlerunning{Exact Matching in Growing Recursive Trees}
+\author{Marek Ga\l{}\k{a}zka}
+\authorrunning{M. Ga\l{}\k{a}zka}
+\institute{Faculty of Mathematics and Computer Science,\\
+Adam Mickiewicz University, Pozna\'n, Poland}
+\maketitle
+
+\begin{abstract}
+We analyze the standard local maintenance of maximum-cardinality
+matching under uniform recursive leaf attachment. For insertion into a
+tree of size $n$, exactly one old binary dynamic-programming state
+changes in expectation, and the expected inspection count is $2-1/n$.
+An explicit optimum is maintained in constant expected update time and
+recourse, with linear space and constant-time queries. We identify the
+limiting update law and prove that the total inspection count divided
+by $N$ converges to two in $L^1$, with error
+$O(N^{-1/3}(\log N)^{2/3})$. The largest inspection count divided by
+$\log N/\log\log N$ converges in probability to one. Our contribution
+is the probabilistic analysis of a known propagation scheme, using
+root sensitivity and standard fringe-subtree tools. All randomness
+comes from the input; the algorithm is deterministic.
+\keywords{Dynamic graph algorithms \and Maximum matching \and Random recursive trees \and Recourse \and Average-case analysis}
+\end{abstract}
+
+\section{Introduction}
+
+A matching pairs vertices along edges, with no vertex used twice;
+a maximum matching uses as many pairs as possible. On a static tree,
+it is computed by a simple linear-time dynamic program. After adding
+a leaf, however, its local states can change along a long path towards
+the root (Fig.~\ref{fig:propagation}). How much work is needed over a
+growing sequence of trees? We prove an exact expected cost below two
+vertex inspections when each new leaf chooses its parent uniformly.
+
+The local propagation scheme and the static binary recurrence are
+known. Our contribution is their analysis under uniform recursive
+growth: exact finite-size update identities, constant expected
+recourse for an explicit optimum, the limiting update law, a
+quantitative law of large numbers for cumulative inspections, and the
+first-order maximum with leading constant one. Root sensitivity
+drives the local results; an additive representation of the execution
+history and long fringe paths yield the global ones.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[x=0.85cm,y=0.52cm,
+ vertex/.style={circle,draw,minimum size=4.8mm,inner sep=0pt,font=\small},
+ one/.style={vertex,fill=black!65,text=white},
+ zero/.style={vertex,fill=white},
+ changed/.style={double,double distance=0.6pt},
+ match/.style={line width=1.2pt}]
+ \begin{scope}
+  \node[font=\small\bfseries] at (0.4,5.1) {Before insertion};
+  \draw (0,4)--(-1,3) (0,4)--(1,3)--(1,2)--(1,1);
+  \draw[match] (0,4)--(-1,3) (1,2)--(1,1);
+  \node[one] at (0,4) {1}; \node[zero] at (-1,3) {2};
+  \node[zero] at (1,3) {3}; \node[one] at (1,2) {4};
+  \node[zero] at (1,1) {5};
+ \end{scope}
+ \begin{scope}[shift={(4.8,0)}]
+  \node[font=\small\bfseries] at (0.4,5.1) {After insertion};
+  \draw (0,4)--(-1,3) (0,4)--(1,3)--(1,2)--(1,1)--(1,0);
+  \draw[match] (0,4)--(-1,3) (1,3)--(1,2) (1,1)--(1,0);
+  \draw[->,dashed] (2,1)--(2,3)--(0.5,3.85);
+  \node[one] at (0,4) {1}; \node[zero] at (-1,3) {2};
+  \node[one,changed] at (1,3) {3};
+  \node[zero,changed] at (1,2) {4};
+  \node[one,changed] at (1,1) {5}; \node[zero] at (1,0) {6};
+  \node[font=\scriptsize,anchor=east] at (-0.35,4.3) {unchanged};
+  \node[font=\scriptsize,anchor=west] at (1.4,0) {new leaf};
+ \end{scope}
+\end{tikzpicture}
+\caption{Adding leaf 6 flips states at 5, 4, and 3 (double circles).
+The root 1 is inspected but stays in state one because leaf 2 has state
+zero; hence $K_5=3$ and $U_5=4$. White and filled circles denote states
+zero and one, respectively; thick edges form maximum matchings.
+The dashed arrow traces the upward inspections. State zero does not
+mean unmatched: vertex 2 is matched to the root in both trees.}
+\label{fig:propagation}
+\end{figure}
+
+\paragraph{Related work.}
+Janson~\cite{Janson2020} gives the classical binary recurrence and its
+relation to independence number, maximum matching, and minimum vertex
+cover. Fuchs et al.\ \cite{Fuchs2020} study static parameters of random
+recursive trees. We use the general fringe-subtree identities and
+covariance formulas of Holmgren and Janson~\cite{HolmgrenJanson2015},
+including their version retaining arrival labels. Our analysis concerns
+changes between successive trees and the resulting execution cost.
+
+For arbitrary dynamically changing trees, Gupta and Sharma
+\cite{GuptaSharma2009} maintain exact matching cardinality in
+$O(\log n)$ update time using top trees. Tirodkar and Vishwanathan
+\cite{TirodkarVishwanathan2018} give constant-time approximate matching
+in incremental trees. Bosek et al.\ \cite{Bosek2018} bound the total
+shortest augmenting-path length by $O(n\log n)$ for trees under
+one-sided bipartite arrivals, a different model. Change propagation is
+a standard dynamization method~\cite{Acar2004}; pivotal vertices also
+arise in random tree automata~\cite{Johnson2020}. These are existing
+tools and context, rather than claims of novelty here.
+
+\section{Model and main result}\label{sec:model}
+
+Let $T_1$ consist of the root $1$. For $n\ge1$, obtain $T_{n+1}$ by adding
+vertex $n+1$ and the edge $\{P_{n+1},n+1\}$, where the variables
+$P_{n+1}$ are independent and uniform on $\{1,\ldots,n\}$. The parent
+$P_{n+1}$ is supplied to the update algorithm. There are no deletions or
+edge weights. We use a word-RAM in which vertex identifiers and counters
+up to the current input size fit in a word.
+
+For a rooted tree $T$, write $T_v$ for the subtree rooted at $v$ and
+$\nu(T)$ for its maximum matching cardinality. Define
+\begin{equation}\label{eq:state}
+ d(v)=\ind\{\text{some }u\in\ch(v)\text{ has }d(u)=0\}.
+\end{equation}
+In particular, a leaf has state zero. After an insertion the algorithm
+updates the parent of the new leaf, then proceeds to successive ancestors
+while their states change. It stops at the first unchanged state or after
+processing the root. Let $K_n$ be the number of \emph{old} vertices whose
+states change in $T_n\to T_{n+1}$, and let $U_n$ be the number of old
+vertices inspected by this upward propagation loop, including the final
+unchanged one when present. It does not count the subsequent commit of
+recorded matching-edge changes; that also takes $O(1+U_n)$ time.
+
+\begin{theorem}\label{thm:main}
+There is a deterministic algorithm maintaining a maximum matching $M_n$
+of $T_n$ using $O(n)$ words of space and $O(1+U_n)$ time for the next
+insertion. Cardinality, mate, and edge-membership queries take $O(1)$ time
+after each completed insertion. For every $n\ge1$,
+\begin{equation}\label{eq:mainmeans}
+ \E K_n=1,\qquad \E U_n=2-\frac1n,
+ \qquad \E\lvert M_{n+1}\triangle M_n\rvert\le3.
+\end{equation}
+Moreover,
+\begin{equation}\label{eq:moment2main}
+ \E 2^{K_n}=3-\frac1n,
+ \qquad \sup_{n\ge1}\E m^{K_n}\le e\,m!
+ \quad\text{for every integer }m\ge1.
+\end{equation}
+For every $a>0$ there is a constant $C_a$ such that, for all sufficiently
+large $N$,
+\begin{equation}\label{eq:seqbound}
+ \PP\left(\max_{1\le n<N}U_n>
+ C_a\frac{\log N}{\log\log N}\right)\le N^{-a}.
+\end{equation}
+\end{theorem}
+
+The expected total number of old-vertex inspections in building $T_N$ is
+exactly $2(N-1)-H_{N-1}$, where $H_j=\sum_{i=1}^j1/i$ and $H_0=0$.
+Thus the total expected running time is linear. Expectations average
+over the entire growth history, rather than conditioning on every
+realized $T_n$. Extending a rooted path changes every old state; on
+such a path, even averaging over the next parent gives
+$\E[U_n\mid T_n]=\Theta(n)$: approximately half the sites propagate
+to the root, with depths summing to $\Theta(n^2)$.
+
+Sections~\ref{sec:limit}--\ref{sec:maximum} give the limiting update
+law, cumulative cost, and longest propagation. The maximum result
+concerns this algorithm, rather than all dynamic matching algorithms.
+
+\section{The local algorithm}\label{sec:algorithm}
+
+We first record the standard static invariant, including a convenient
+representation of a matching. Its first part is the complement of the
+essential-vertex recurrence in \cite{Janson2020}.
+
+\begin{lemma}\label{lem:static}
+For every rooted tree $T$,
+\begin{equation}\label{eq:additive}
+ \nu(T)=\sum_{v\in T}d(v).
+\end{equation}
+Choosing one zero-state child $c(v)$ for each vertex with $d(v)=1$
+produces a maximum matching
+$M=\{\{v,c(v)\}:d(v)=1\}$.
+\end{lemma}
+\begin{proof}
+Let $\nu_0(T_v)$ denote the maximum matching cardinality when $v$ is
+unmatched within $T_v$. Then
+$\nu_0(T_v)=\sum_{u\in\ch(v)}\nu(T_u)$.
+Writing $\delta(u)=\nu(T_u)-\nu_0(T_u)$, matching $v$ to a child $u$
+improves this sum by $1-\delta(u)$. Induction from the leaves gives
+$\delta(v)\in\{0,1\}$ and
+$\delta(v)=1$ if and only if some child has $\delta(u)=0$. Hence
+$\delta(v)=d(v)$, and summing the recurrence proves
+\eqref{eq:additive}. The proposed matching edges are disjoint: their
+parent endpoints have state one, their child endpoints have state zero,
+and each child has only one parent. Their number is $\sum_vd(v)$.
+\end{proof}
+
+Store $d(v)$, its parent, a doubly linked list $L(v)$ of zero-state
+children, and a selected child $c(v)$ when $d(v)=1$. Child list handles
+give $O(1)$ insertions and deletions. Maintain $\mu=\sum_vd(v)$;
+retain a valid selected child, otherwise choose the list head.
+
+\begin{figure}[t]
+\hrule\smallskip
+\textbf{InsertLeaf($x,p$)} \quad (a new vertex $x$ with parent $p$)
+\begin{enumerate}
+\setlength{\itemsep}{1pt}
+\item Set $\parnt(x)=p$, $d(x)=0$, $L(x)=\varnothing$, $c(x)=\nil$;
+      insert $x$ into $L(p)$ and set $v=p$.
+\item Set $b=d(v)$ and $d(v)=\ind\{L(v)\ne\varnothing\}$;
+      update $\mu\gets\mu+d(v)-b$.
+\item Record a new choice for $c(v)$: none if $d(v)=0$; otherwise retain
+      the old choice if it is still in $L(v)$, or choose the list head.
+\item If $d(v)=b$ or $v$ is the root, go to step 6.
+\item Put $q=\parnt(v)$. Insert $v$ into $L(q)$ if $d(v)=0$, and remove
+      it otherwise. Set $v=q$ and return to step 2.
+\item Commit recorded choices: delete all obsolete matching edges,
+      then add all new matching edges and store the new selected children.
+\end{enumerate}
+\smallskip\hrule
+\caption{Each pass through steps 2--5 inspects one old vertex.}
+\label{fig:algorithm}
+\end{figure}
+
+A selected child is tested in constant time using its current state.
+Record witness replacements during propagation; deleting obsolete edges
+before additions keeps the explicit edge set a matching throughout the
+commit. Queries are issued between completed insertions.
+
+\begin{lemma}\label{lem:implementation}
+The algorithm is correct for every sequence of leaf insertions. An
+insertion takes $O(1+U_n)$ time and changes at most $K_n+2$ matching
+edges. Its space and query bounds are as in Theorem~\ref{thm:main}.
+\end{lemma}
+\begin{proof}
+Only ancestors of the new leaf can change state. At an inspected vertex,
+the children already have their new states, so its updated list gives
+the correct value in \eqref{eq:state}. If that value is unchanged, the
+parent receives the same input as before and no higher state can change.
+Otherwise the list update at the parent is exactly the required one.
+Thus all states and lists are correct upon termination. The global
+counter and Lemma~\ref{lem:static} give the optimum cardinality and
+matching.
+
+Every pass performs a constant number of list, counter, and witness
+operations. A changing state adds or deletes exactly one selected
+downward edge. The final unchanged vertex may replace its selected
+child, costing at most two further edge changes. There are no downward
+edges at the new leaf. This proves the recourse bound; the number of
+recorded changes and the commit time are also $O(1+U_n)$.
+
+Each vertex requires a constant number of words. To answer a mate query
+at $v$, return $c(v)$ when $d(v)=1$; otherwise return $\parnt(v)$ if
+that parent selects $v$, and report unmatched otherwise. The cardinality
+is $\mu$. For a parent--child edge, membership is tested by the parent's
+selected-child pointer. Since labels increase down the tree, the smaller
+endpoint is the only possible parent for an arbitrary queried pair.
+\end{proof}
+
+\section{Root sensitivity and the exact mean}\label{sec:mean}
+
+For a rooted tree $T$, let $B(T)$ be the number of vertices at which
+attaching a new leaf would change the root state. This counts insertion
+locations, not changed vertices. If the root has $q$ zero-state children,
+then
+\begin{equation}\label{eq:Brec}
+ B(T)=
+ \begin{cases}
+  1+\sum_{u\in\ch(r)}B(T_u),&q=0,\\
+  B(T_{u_0}),&q=1,\ \text{with unique zero-state child }u_0,\\
+  0,&q\ge2.
+ \end{cases}
+\end{equation}
+Indeed, a direct attachment changes a zero-state root. A change inside
+one child subtree affects the root precisely when all other children
+have state one. Two zero-state children prevent any single attachment
+from changing the root.
+
+\begin{lemma}\label{lem:influence}
+For a uniform recursive tree of every size $n\ge1$, $\E B(T_n)=1$.
+\end{lemma}
+\begin{proof}
+Use exponential generating functions over increasing rooted trees on
+the label set $\{1,\ldots,n\}$. There are $(n-1)!$ such trees, so their
+generating function is
+\[
+ \R(z)=\sum_{n\ge1}\frac{z^n}{n}=-\log(1-z).
+\]
+Let $A_i(z)$ enumerate trees whose root has state $i$. Removing the
+root, which has the smallest label, leaves a set of child trees. A
+zero-state root has only one-state children. Consequently,
+\begin{equation}\label{eq:A}
+ A_0'=e^{A_1},\qquad A_0+A_1=\R,
+ \qquad e^{A_0}=1+\R.
+\end{equation}
+The last identity follows by differentiating $e^{A_0}$ and using
+$(e^{A_0})'=e^{\R}=\R'$ and $A_0(0)=0$.
+
+Let $B_i(z)$ enumerate the same trees with weight $B(T)$. The three
+cases in \eqref{eq:Brec} give
+\[
+ B_0'=e^{A_1}(1+B_1),\qquad B_1'=e^{A_1}B_0.
+\]
+For $B=B_0+B_1$ this yields $B'=A_0'(1+B)$ and $B(0)=0$.
+Thus $1+B=e^{A_0}=1+\R$, or $B=\R$. Since
+$[z^n]B=\E B(T_n)/n$, coefficient comparison proves the claim.
+\end{proof}
+
+We use the following standard fringe-subtree identity; see
+\cite{HolmgrenJanson2015}. We include its counting justification to make
+the averaging step explicit.
+
+\begin{lemma}\label{lem:fringe}
+For any function $f$ of a finite rooted tree, invariant under increasing
+relabeling,
+\begin{equation}\label{eq:fringe}
+ \E\sum_{v\in T_n}f((T_n)_v)
+ =n\sum_{k=1}^{n-1}\frac{\E f(T_k)}{k(k+1)}+\E f(T_n).
+\end{equation}
+\end{lemma}
+\begin{proof}
+Let $N_{n,k}$ count fringe subtrees of size $k$. A fixed subtree of
+size $k$ receives the next vertex with probability $k/n$; a new singleton
+subtree is born at every insertion. Thus, with absent sizes interpreted
+as zero,
+\[
+ \E N_{n+1,k}=(1-k/n)\E N_{n,k}
+       +((k-1)/n)\E N_{n,k-1}+\ind\{k=1\}.
+\]
+Induction gives $\E N_{n,k}=n/(k(k+1))$ for $k<n$, while
+$N_{n,n}=1$. Conditional on its size, a fringe subtree, after increasing
+relabeling, is a uniform recursive tree: each arrival within it selects
+a uniform current vertex, and the probability of an arrival depends
+only on its size. Summing by subtree size gives \eqref{eq:fringe}.
+\end{proof}
+
+\begin{proof}[Mean and algorithmic claims of Theorem~\ref{thm:main}]
+For a fixed $T_n$, each old vertex $v$ changes state for exactly
+$B((T_n)_v)$ of the $n$ possible insertion locations. Therefore
+\[
+ \E[K_n\mid T_n]=\frac1n\sum_{v\in T_n}B((T_n)_v).
+\]
+Applying Lemmas~\ref{lem:influence} and \ref{lem:fringe} gives
+\[
+ \E K_n=\sum_{k=1}^{n-1}\frac1{k(k+1)}+\frac1n=1.
+\]
+The root changes with probability $\E B(T_n)/n=1/n$. If $R_n$ is the
+indicator of this event, the stopping rule gives the deterministic
+identity $U_n=K_n+1-R_n$. Hence $\E U_n=2-1/n$.
+Lemma~\ref{lem:implementation} now gives constant expected update time
+and $\E|M_{n+1}\triangle M_n|\le\E K_n+2=3$, together with the
+remaining implementation claims.
+\end{proof}
+
+The zero and one states also give a maximum independent set and minimum
+vertex cover~\cite{Janson2020}, with $O(1)$ membership queries and
+expected recourse two and one, respectively, counting the new vertex.
+
+\section{Propagation tails}\label{sec:tails}
+
+The sensitivity calculation also tracks how far a change travels. For
+$s>0$, define
+\[
+ B_s(T)=\sum_{w\in T}
+ s^{\operatorname{depth}_T(w)}
+ \ind\{\text{attaching at }w\text{ changes the root state}\}.
+\]
+Depth is measured from the root to the attachment vertex. Let
+$B(z,s)$ be its weighted exponential generating function, and put
+$b_k(s)=[z^k]B(z,s)$, so that $\E B_s(T_k)=k b_k(s)$.
+
+\begin{lemma}\label{lem:marked}
+For $s>0$,
+\begin{align}
+ B(z,s)&=\frac{(1+\R(z))^s-1}{s},\label{eq:Bmarked}\\
+ F_n(s):=\E\sum_{j=1}^{K_n}s^{j-1}
+ &=\sum_{k=1}^{n-1}\frac{b_k(s)}{k+1}+b_n(s),\label{eq:F}
+ \end{align}
+where an empty sum is zero. In particular,
+$\E s^{K_n}=1+(s-1)F_n(s)$.
+\end{lemma}
+\begin{proof}
+Relative to \eqref{eq:Brec}, every sensitive attachment within a child
+subtree acquires one factor $s$. Splitting again by the root state gives
+$\partial_z B=e^{A_1}(1+sB)$ with $B(0,s)=0$. Solving and using
+\eqref{eq:A} proves \eqref{eq:Bmarked}.
+
+For a fixed insertion, the changed old vertices are a consecutive chain
+starting at the attachment vertex. Its $j$th changed ancestor sees that
+attachment at depth $j-1$. Summing $B_s((T_n)_v)$ over all fringe roots
+and averaging over the $n$ attachment locations therefore gives $F_n(s)$.
+Equation~\eqref{eq:fringe} and $\E B_s(T_k)=k b_k(s)$ prove
+\eqref{eq:F}. The final identity is the finite geometric-sum formula,
+also valid at $s=1$.
+\end{proof}
+
+\begin{proof}[Moment and tail claims of Theorem~\ref{thm:main}]
+For $s=2$, \eqref{eq:Bmarked} gives
+\[
+ B(z,2)=\R(z)+\tfrac12\R(z)^2,
+ \qquad b_k(2)=\frac{1+H_{k-1}}{k}.
+\]
+Since $F_1(2)=1$, and \eqref{eq:F} yields
+\[
+ F_{n+1}(2)-F_n(2)
+ =b_{n+1}(2)-\frac n{n+1}b_n(2)=\frac1{n(n+1)},
+\]
+we have $F_n(2)=2-1/n$ and $\E2^{K_n}=3-1/n$. In particular,
+\begin{equation}\label{eq:geomtail}
+ \PP(K_n\ge k)\le 3\,2^{-k}.
+\end{equation}
+
+For an integer $m\ge1$, differentiating \eqref{eq:Bmarked} shows that
+\begin{equation}\label{eq:Fmono}
+ F_{n+1}(m)-F_n(m)
+ =\frac{[z^n](1+\R(z))^{m-1}}{n+1}\ge0.
+\end{equation}
+For every fixed integer $j\ge1$,
+$[z^n]\R(z)^j=O((1+\log n)^{j-1}/n)$, by induction using
+$n[z^n]\R^j=j\sum_{k=0}^{n-1}[z^k]\R^{j-1}$.
+Thus $b_n(m)\to0$. The coefficients are nonnegative, so termwise
+integration in \eqref{eq:F} and monotone convergence give
+\begin{align*}
+ \lim_{n\to\infty}F_n(m)
+ &=\int_0^1 B(z,m)\,dz\\
+ &=\frac1m\left(\int_0^\infty (1+t)^m e^{-t}\,dt-1\right)
+ =\frac1m\left(m!\sum_{j=0}^m\frac1{j!}-1\right).
+\end{align*}
+The final equality follows by expanding $(1+t)^m$ and integrating each
+monomial. By \eqref{eq:Fmono}, this limit bounds every $F_n(m)$.
+Hence
+\[
+ \E m^{K_n}\le\frac1m+\frac{m-1}{m}
+                 m!\sum_{j=0}^m\frac1{j!}\le e\,m!.
+\]
+For sufficiently large $k$, apply Markov's inequality with
+$m=\lfloor k/\log k\rfloor\ge2$, and use $m!\le m^m$. Uniformly in $n$,
+\begin{equation}\label{eq:strongtail}
+ \PP(K_n\ge k)
+ \le \exp\{-k\log k+k\log\log k+O(k)\}.
+\end{equation}
+For any fixed $a>0$, choosing $k$ to be a sufficiently large constant
+multiple of $\log N/\log\log N$ makes the right-hand side at most
+$N^{-a-1}$. A union bound over $n<N$ and $U_n\le K_n+1$ prove
+\eqref{eq:seqbound}. No independence between successive costs is needed.
+\end{proof}
+
+\section{The limiting law of one update}\label{sec:limit}
+
+The weighted sensitivity also determines the entire limiting law,
+beyond the moment bounds in Theorem~\ref{thm:main}. Put
+\[
+ J(s)=\int_0^\infty e^{st+1-e^t}\,dt,\qquad
+ \rho=J(0)=e\int_1^\infty\frac{e^{-u}}u\,du
+       =0.5963473623\ldots.
+\]
+
+\begin{theorem}\label{thm:limit}
+There is a nonnegative integer-valued random variable $K$ such that
+$K_n\xrightarrow{d}K$ and $U_n\xrightarrow{d}K+1$. Its probability
+generating function and tail probabilities are
+\begin{align}
+ G(s):=\E s^K&=1+(s-1)J(s),\qquad s\ge0,\label{eq:limitpgf}\\
+ \PP(K\ge k)&=\frac1{(k-1)!}\int_0^\infty
+          t^{k-1}e^{1-e^t}\,dt,\qquad k\ge1.\label{eq:limittails}
+\end{align}
+Every fixed polynomial moment converges. In particular,
+\begin{gather*}
+ \E K=1,\qquad \PP(K=0)=1-\rho,\\
+ \lim_{n\to\infty}\operatorname{Var}(K_n)
+ =\lim_{n\to\infty}\operatorname{Var}(U_n)
+ =2\rho=1.1926947246\ldots.
+\end{gather*}
+Also $\E s^{K_n}\to G(s)$ for every fixed $s>0$.
+\end{theorem}
+\begin{proof}
+Fix $s>0$ and choose an integer $m\ge\max\{1,s\}$. The combinatorial
+definition gives $0\le b_n(s)\le b_n(m)$, and the proof of
+Theorem~\ref{thm:main} shows that $b_n(m)\to0$. Nonnegative
+coefficients and \eqref{eq:F} therefore yield
+\[
+ F_n(s)\longrightarrow\int_0^1B(z,s)\,dz
+ =\frac1s\int_0^\infty\bigl((1+x)^s-1\bigr)e^{-x}\,dx=J(s).
+\]
+For the last equality write $((1+x)^s-1)/s$ as
+$\int_0^{\log(1+x)}e^{st}\,dt$ and interchange the integrals.
+The resulting integral is finite for every real $s$.
+
+Thus the generating functions converge to \eqref{eq:limitpgf} for
+$0<s<1$, with a limit continuous at $s=1$ and equal to one there.
+The continuity theorem for probability generating functions gives $K$.
+The uniform exponential-moment bounds in Theorem~\ref{thm:main} imply
+uniform integrability of every polynomial moment. Since
+$U_n=K_n+1-R_n$ and $\PP(R_n=1)=1/n$, the assertions for $U_n$ follow
+as well. Expanding $e^{st}$ in $J(s)$ and comparing coefficients in
+$J(s)=\sum_{k\ge1}\PP(K\ge k)s^{k-1}$ proves
+\eqref{eq:limittails}, and continuity gives $G(0)=1-\rho$.
+Finally, $J(1)=1$ and integration by parts gives $J'(1)=\rho$.
+Differentiating $G$ at one yields $\E K=1$ and
+$\operatorname{Var}(K)=G''(1)=2\rho$.
+\end{proof}
+
+\section{The cumulative inspection count}\label{sec:total}
+
+The successive update costs are dependent. We handle the entire
+execution by recording it as a function of the final increasing tree.
+We first state a consequence of the fringe-pattern covariance formula
+of Holmgren and Janson~\cite{HolmgrenJanson2015}. Arrival-label order is
+retained in the patterns, as permitted by their increasing-tree version.
+
+\begin{lemma}\label{lem:fringevariance}
+Let $f$ be a real function on increasing rooted trees, invariant under
+increasing relabeling, and define
+$Y_{N,k}=\sum_{v\in T_N:\,|(T_N)_v|=k}f((T_N)_v)$.
+For $N>2k$,
+\[
+ \E Y_{N,k}=\frac{N\E f(T_k)}{k(k+1)},\qquad
+ \operatorname{Var}(Y_{N,k})\le
+       \frac{N\E f(T_k)^2}{k(k+1)}.
+\]
+\end{lemma}
+\begin{proof}
+The mean is the fixed-size form of Lemma~\ref{lem:fringe}. For a
+pattern $\tau$ of size $k$, let $X_\tau$ count its fringe occurrences
+and $p_\tau=\PP(T_k=\tau)$. The cited covariance formula specializes to
+\[
+ \operatorname{Cov}(X_\tau,X_\sigma)
+ =N\left(\frac{\ind\{\tau=\sigma\}p_\tau}{k(k+1)}
+          -\beta_kp_\tau p_\sigma\right),\qquad
+ \beta_k=\frac{3k+2}{k(k+1)^2(2k+1)}>0.
+\]
+Indeed, two distinct patterns of the same size cannot contain each
+other as fringe subtrees. Multiplying by $f(\tau)f(\sigma)$ and summing
+gives variance
+$N\E f(T_k)^2/(k(k+1))-N\beta_k(\E f(T_k))^2$, proving the bound.
+\end{proof}
+
+\begin{theorem}\label{thm:total}
+For $S_N=\sum_{n=1}^{N-1}U_n$,
+\begin{equation}\label{eq:totalLLN}
+ \E\left|\frac{S_N}{N}-2\right|
+ =O\left(N^{-1/3}(\log N)^{2/3}\right).
+\end{equation}
+In particular, $S_N/N\to2$ in $L^1$ and in probability, and the total
+running time is $O(N)$ with probability tending to one.
+\end{theorem}
+\begin{proof}
+For an increasing tree $T$, let $q(T)$ be the number of changes of its
+root state while its vertices are inserted in increasing-label order.
+The initial state is zero, so $q(T_1)=0$ and $0\le q(T)\le |T|-1$.
+The root-change probability from Section~\ref{sec:mean} gives
+\begin{equation}\label{eq:historymean}
+ \E q(T_k)=H_{k-1},\qquad
+ \E q(T_k)^2\le(k-1)H_{k-1}.
+\end{equation}
+Every state change at $v$ is recorded once by $q((T_N)_v)$: insertions
+outside this subtree do not affect its states, and the relative order
+of its internal insertions is retained by its labels. Consequently,
+\begin{equation}\label{eq:historyidentity}
+ A_N:=\sum_{n=1}^{N-1}K_n=\sum_{v\in T_N}q((T_N)_v),\qquad
+ S_N=N-1+A_N-q(T_N).
+\end{equation}
+In particular, $\E A_N=N-1$.
+
+For $2\le L<N/2$, truncate the sum to subtrees of size at most $L$,
+writing $A_N^{(L)}=\sum_{k=1}^L Y_{N,k}$ with $f=q$. Then
+\[
+ \E A_N^{(L)}=Na_L,\qquad
+ a_L=\sum_{k=1}^L\frac{H_{k-1}}{k(k+1)},\qquad
+ 1-a_L=\frac{H_L+1}{L+1}.
+\]
+The last identity follows by telescoping, using
+$H_k-H_{k-1}=1/k$. Lemma~\ref{lem:fringevariance},
+\eqref{eq:historymean}, and the $L^2$ triangle inequality give
+\[
+ \bigl(\operatorname{Var}(A_N^{(L)})\bigr)^{1/2}
+ \le\sqrt N\sum_{k=2}^L\sqrt{\frac{H_{k-1}}k}
+ =O\bigl(\sqrt{NL\log(L+1)}\bigr).
+\]
+Since $A_N-A_N^{(L)}\ge0$ and its mean is $N(1-a_L)-1$,
+\[
+ \E\left|\frac{A_N}{N}-1\right|
+ \le O\left(\sqrt{\frac{L\log(L+1)}N}\right)
+       +\frac{2(H_L+1)}{L+1}.
+\]
+Choose $L=\lfloor(N\log N)^{1/3}\rfloor$. The two terms have order
+$N^{-1/3}(\log N)^{2/3}$. By \eqref{eq:historyidentity}, replacing
+$A_N/N-1$ by $S_N/N-2$ costs at most
+$(1+\E q(T_N))/N=O(\log N/N)$ in $L^1$. This proves
+\eqref{eq:totalLLN}. Summing the update-time bound
+$O(1+U_n)$ proves the final assertion.
+\end{proof}
+
+The rate in \eqref{eq:totalLLN} is a sufficient bound obtained by
+truncation; we do not claim it is optimal. A central limit theorem for
+$S_N$, including its variance scale and possible Gaussian limit,
+requires a separate argument for the dependent execution history.
+
+\section{The sharp scale of the longest update}\label{sec:maximum}
+
+Long fringe paths force long updates somewhere in their own growth
+history. Together with the uniform tail bound, this determines the
+first-order asymptotics of the maximum inspection count.
+
+\begin{theorem}\label{thm:maximum}
+Let $W_N=\max_{1\le n<N}U_n$ and
+$\ell_N=\log N/\log\log N$. Then
+\begin{equation}\label{eq:sharpmaximum}
+ \frac{W_N}{\ell_N}\xrightarrow{\mathbb P}1.
+\end{equation}
+\end{theorem}
+\begin{proof}
+Fix $0<\varepsilon<1$. By $U_n\le K_n+1$, the union bound and
+\eqref{eq:strongtail}, with $h=(1+\varepsilon)\ell_N-1$ rounded up,
+\[
+ \PP\bigl(W_N>(1+\varepsilon)\ell_N\bigr)
+ \le N\exp\{-h\log h+h\log\log h+O(h)\}
+ =N^{-\varepsilon+o(1)}.
+\]
+For the lower bound let $X_{N,k}$ count fringe subtrees that are paths
+of $k$ vertices rooted at an endpoint. Exactly one of the $(k-1)!$
+recursive trees of size $k$ is such a path. Thus
+Lemma~\ref{lem:fringevariance}, with $f$ its indicator, gives
+\[
+ \mu_{N,k}:=\E X_{N,k}=\frac{N}{(k+1)k!},\qquad
+ \operatorname{Var}(X_{N,k})\le\mu_{N,k}\quad(N>2k).
+\]
+Set $k=\lceil(1-\varepsilon)\ell_N\rceil+1$. Stirling's formula
+implies $\log\mu_{N,k}=\varepsilon\log N+o(\log N)$, so Chebyshev's
+inequality yields
+\[
+ \PP(X_{N,k}=0)\le\mu_{N,k}^{-1}=N^{-\varepsilon+o(1)}.
+\]
+If such a fringe path occurs in $T_N$, consider the insertion of its
+terminal vertex. Immediately before that insertion, the other $k-1$
+vertices form a fringe path: no extra branch could have disappeared
+later, since there are no deletions. Adding the terminal leaf flips
+every state on this path, so that update has $K_n\ge k-1$ and
+$U_n\ge k-1$. Hence $W_N\ge(1-\varepsilon)\ell_N$ whenever
+$X_{N,k}>0$. Combining the bounds proves \eqref{eq:sharpmaximum}.
+\end{proof}
+
+\section{Reproducible checks and finite-size behavior}\label{sec:experiments}
+
+The supplied implementation maintains an explicit matching using the
+lists and retention rule of Section~\ref{sec:algorithm}. Enumerating
+all 46,234 recursive trees of sizes 1--9 verifies the matching after
+every insertion against an independent static dynamic program. For
+$n\le8$, it confirms \eqref{eq:mainmeans}, the identity for
+$\E2^{K_n}$, and the root-change probability $1/n$. Separate checks
+cover the history identities and fixed-size covariance formula.
+
+We generated 32 independent trajectories to $N=10^6$ using
+\texttt{mt19937\_64}, seeds 0--31, and rejection sampling for uniform
+parents. An independent static DP checks the optimum and mate pointers
+at every reported checkpoint. Table~\ref{tab:experiments} reports
+inspections; observations at different sizes share the same trajectories.
+
+\input{verification/experiment_table.tex}
+
+For $N=10^6$, the mean recourse is $1.3076$ per insertion, below the
+proved upper bound three. Pooling the last 500,000 updates of each run
+gives 16 million observations with empirical $\PP(K_n=0)=0.40372$
+and variance $1.19211$, close to $1-\rho=0.40365$ and
+$2\rho=1.19269$. However, the mean $W_N/\ell_N$ is still $2.13$.
+The first-order maximum theorem gives no finite-size approximation
+rate; its limiting constant is still a poor numerical approximation at
+$N=10^6$. These observations establish neither a rate nor monotonicity.
+
+\paragraph{Scope and reproduction.}
+The guarantees apply to unweighted matching under uniform recursive
+leaf insertions. Other attachment laws, weights, and deletions require
+separate analysis. The supplementary archive contains the implementation,
+exact checker, raw data, and the table-generation script. Computational
+checks supplement the proofs; empirical recourse does not improve the
+proved upper bound.
+
+\section{Conclusion}
+
+Standard matching propagation admits exact update means, a limiting
+law, cumulative linear cost, and a sharp first-order maximum under
+uniform recursive growth. Nonuniform attachment, weights, and sharper
+cumulative fluctuations, including a possible central limit theorem,
+remain directions for further work.
+
+\begin{thebibliography}{9}
+\bibitem{Acar2004}
+Acar, U.A., Blelloch, G.E., Harper, R., Vittes, J.L., Woo, S.L.M.:
+Dynamizing static algorithms, with applications to dynamic trees and
+history independence. In: Proceedings of the Fifteenth Annual ACM--SIAM
+Symposium on Discrete Algorithms (SODA) (2004).
+\url{https://www.cs.cmu.edu/~guyb/papers/ABHVW04.pdf}
+
+\bibitem{Bosek2018}
+Bosek, B., Leniowski, D., Sankowski, P., Zych-Pawlewicz, A.:
+A tight bound for shortest augmenting paths on trees.
+arXiv:1704.02093 (2017). \url{https://arxiv.org/abs/1704.02093}
+
+\bibitem{Fuchs2020}
+Fuchs, M., Holmgren, C., Mitsche, D., Neininger, R.:
+A note on the independence number, domination number and related
+parameters of random binary search trees and random recursive trees.
+arXiv:1909.12767 (2020). \url{https://arxiv.org/abs/1909.12767}
+
+\bibitem{GuptaSharma2009}
+Gupta, M., Sharma, A.:
+An $O(\log(n))$ fully dynamic algorithm for maximum matching in a tree.
+arXiv:0901.2900 (2009). \url{https://arxiv.org/abs/0901.2900}
+
+\bibitem{HolmgrenJanson2015}
+Holmgren, C., Janson, S.:
+Limit laws for functions of fringe trees for binary search trees and
+random recursive trees. Electronic Journal of Probability \textbf{20},
+no. 4, 1--51 (2015)
+
+\bibitem{Janson2020}
+Janson, S.:
+On the independence number of some random trees.
+arXiv:2003.08712 (2020). \url{https://arxiv.org/abs/2003.08712}
+
+\bibitem{Johnson2020}
+Johnson, T., Podder, M., Skerman, F.:
+Random tree recursions: which fixed points correspond to tangible sets
+of trees? Random Structures \& Algorithms \textbf{56}(3), 796--837 (2020).
+\doi{10.1002/rsa.20895}
+
+\bibitem{TirodkarVishwanathan2018}
+Tirodkar, S., Vishwanathan, S.:
+Maximum matching on trees in the online preemptive and the incremental
+dynamic graph models. arXiv:1612.05419 (2018).
+\url{https://arxiv.org/abs/1612.05419}
+\end{thebibliography}
+\end{document}

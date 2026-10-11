@@ -1,0 +1,13 @@
+/build/
+/results/
+/demo
+/test_matching
+__pycache__/
+*.pyc
+/paper/*.aux
+/paper/*.log
+/paper/*.out
+/paper/*.fls
+/paper/*.fdb_latexmk
+/paper/*.synctex.gz
+/paper/recursive_matching.pdf
