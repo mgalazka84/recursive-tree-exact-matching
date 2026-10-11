@@ -2,6 +2,9 @@
 
 Reproducibility code for **Exact Matching in Growing Recursive Trees with Constant Expected Update Cost**, by **Marek Gałązka**, Adam Mickiewicz University, Poznań.
 
+Public repository: https://github.com/mgalazka84/recursive-tree-exact-matching.
+The manuscript cites verified code snapshot `0e4c10c707699f61ca2e83cd28de8ca4683ef03d`; later manuscript-only edits do not change that snapshot.
+
 The code maintains an actual maximum-cardinality matching while vertices arrive as leaves. It includes a reusable C++ implementation, constant-time size/mate/edge queries, independent finite checks, and all data and scripts behind the manuscript's simulation table. Mathematical proofs are in the manuscript; computational checks supplement them.
 
 ## Quick start
