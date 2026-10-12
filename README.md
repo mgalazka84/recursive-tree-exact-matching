@@ -12,8 +12,9 @@ The first source is restored **byte for byte** from pre-affine commit
 `fd72ed52a1eea379ccde2fedcd7cfa2c409d2b00`. The original uniform-experiment
 snapshot remains `0e4c10c707699f61ca2e83cd28de8ca4683ef03d`.
 The second paper has its own definitions, theorem numbering, proofs, and
-bibliography. It explicitly cites the uniform companion and needs none of
-its probabilistic theorems. The algorithm implementation is shared.
+bibliography. It is self-contained and does not cite the separate uniform
+manuscript. The classical recurrence is attributed to existing literature,
+and the algorithm implementation is shared.
 The earlier combined development version remains in Git history at
 `d3b3ace968a14ae8739c061d0c7d451aa516f0d1`.
 

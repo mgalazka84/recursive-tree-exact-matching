@@ -67,19 +67,13 @@ centering, which also gives its second-order asymptotic expansion.
 An explicit limiting update law and a weighted sensitivity comparison
 provide the local estimates needed for these global results.
 
-\paragraph{Relation to the uniform model.}
-The companion manuscript~\cite{GalazkaUniform} analyzes the same
-deterministic propagation algorithm under uniform recursive growth.
-It gives exact finite-size means, a limiting update law, a quantitative
-law of large numbers, a first-order maximum, and reproducible uniform
-simulations. We recall the algorithm only to define the measured costs.
-The present paper treats fixed positive reinforcement and proves the
-parameter-dependent law, a bounded-window maximum, and a nondegenerate
-cumulative-cost CLT. None of its proofs requires the companion's
-probabilistic results. A key difference is that the expected total
-number of root-state changes is finite here, while it grows
-harmonically under uniform attachment. We do not assert bounds uniform
-as reinforcement tends to zero.
+\paragraph{Scope and proof strategy.}
+We treat each fixed positive reinforcement parameter. The expected
+total number of root-state changes is finite, a property used to
+control the contribution of large fringes to the execution history.
+A size-conditioned approximation then permits a Gaussian limit for
+the full cumulative cost. We do not assert estimates uniform as
+reinforcement tends to zero.
 
 \paragraph{Related work.}
 The static matching recurrence is classical and appears through its
@@ -148,8 +142,7 @@ A changed state adds or removes one selected edge; the final unchanged
 vertex may replace one edge by another. Delete all obsolete edges
 before adding replacements. A global counter and mate pointers give
 the query bounds. The word-RAM stores identifiers and counters in
-single words. This is the standard local scheme recalled in
-\cite{GalazkaUniform}.
+single words.
 \end{proof}
 
 \paragraph{Analytic notation.}
@@ -652,22 +645,15 @@ all cutoffs and 3,474 local replacements, preserving every exterior
 state at every arrival prefix. These checks support finite identities;
 the asymptotic assertions rest on the proofs above and in the appendices.
 
-The uniform simulation table belongs to the companion paper and is
-not repeated here. Neither edge weights nor deletions are covered.
-The fixed-positive-reinforcement restriction is essential to the
-finite root-score estimate used here; a uniform-boundary CLT, a
-closed-form variance evaluation, and a sharper distributional
-description of the maximum remain questions for further work.
+Edge weights and deletions are outside the model. Our estimate for
+the root's history uses fixed positive reinforcement. A CLT at the
+uniform boundary, a closed-form variance evaluation, and a sharper
+distributional description of the maximum remain questions for
+further work.
 
 \clearpage
 \begin{thebibliography}{9}
 
-\bibitem{GalazkaUniform}
-Ga\l{}\k{a}zka, M.:
-Exact Matching in Growing Recursive Trees with Constant Expected Update Cost.
-Companion manuscript, uniform-attachment version (2026).
-Source snapshot: \texttt{fd72ed52a1eea379ccde2fedcd7cfa2c409d2b00},
-\url{https://github.com/mgalazka84/recursive-tree-exact-matching}
 \bibitem{GuptaSharma2009}
 Gupta, M., Sharma, A.:
 An $O(\log(n))$ fully dynamic algorithm for maximum matching in a tree.

@@ -40,13 +40,13 @@ Results and proof locations:
   and conditional independence of disjoint interiors.
 - Lemma 9: variance bound for size-centered additive tolls.
 
-Relation to the companion paper:
-The uniform article is explicitly cited as an unpublished companion, with
-its pre-affine source snapshot. Only the common algorithm is recalled.
-No theorem here depends on that paper's probabilistic results. Its exact
-uniform identities, simulation table, and weaker concentration argument
-are not repeated. The beta=0 CLT is not claimed. No closed-form variance
-constant, Gumbel limit, or beta-uniform error bound is claimed.
+Self-contained scope:
+All definitions, statements and proofs needed for the affine results are
+included. The classical matching recurrence is attributed to the existing
+literature, and the implementation lemma is proved directly. The text does
+not cite or refer to the separate uniform-attachment manuscript. The beta=0
+CLT is not claimed. No closed-form variance constant, Gumbel limit, or
+beta-uniform error bound is claimed.
 
 Exact finite verification (Python 3, standard library only):
   python3 verification/verify_preferential.py
