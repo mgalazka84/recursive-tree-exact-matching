@@ -1,20 +1,29 @@
 cff-version: 1.2.0
 repository-code: 'https://github.com/mgalazka84/recursive-tree-exact-matching'
-message: "Please cite the manuscript when using this implementation or its analysis."
+message: "Please cite the manuscript corresponding to the attachment model; see the two references below."
 type: software
-title: "Exact Matching in Growing Random Trees: Reproducibility Code"
-version: 1.4.0
+title: "Exact Matching in Growing Trees: Uniform and Affine Reproducibility Code"
+version: 1.5.0
 date-released: 2026-10-12
 authors:
   - family-names: "Gałązka"
     given-names: "Marek"
     affiliation: "Adam Mickiewicz University, Poznań, Poland"
 license: MIT
-preferred-citation:
-  type: unpublished
-  title: "Exact Matching in Growing Random Trees with Constant Expected Update Cost"
-  authors:
-    - family-names: "Gałązka"
-      given-names: "Marek"
-  year: 2026
-  notes: "Working conference manuscript; no publication venue or DOI is claimed."
+references:
+  - type: unpublished
+    title: "Exact Matching in Growing Recursive Trees with Constant Expected Update Cost"
+    authors:
+      - family-names: "Gałązka"
+        given-names: "Marek"
+    year: 2026
+    url: "https://github.com/mgalazka84/recursive-tree-exact-matching/tree/main/paper"
+    notes: "Uniform-attachment manuscript; restored pre-affine source. No publication venue or DOI is claimed."
+  - type: unpublished
+    title: "Exact Matching under Affine Preferential Attachment: Update Laws, Gaussian Fluctuations, and Extremes"
+    authors:
+      - family-names: "Gałązka"
+        given-names: "Marek"
+    year: 2026
+    url: "https://github.com/mgalazka84/recursive-tree-exact-matching/tree/main/paper_affine"
+    notes: "Standalone affine-attachment manuscript. No publication venue or DOI is claimed."
