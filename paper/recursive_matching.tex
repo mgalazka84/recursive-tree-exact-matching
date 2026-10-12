@@ -670,7 +670,28 @@ parents. An independent static DP checks the optimum and mate pointers
 at every reported checkpoint. Table~\ref{tab:experiments} reports
 inspections; observations at different sizes share the same trajectories.
 
-\input{verification/experiment_table.tex}
+% Prefer the generated table; retain an identical copy for single-file uploads.
+\IfFileExists{verification/experiment_table.tex}{%
+  \input{verification/experiment_table.tex}%
+}{%
+\begin{table}[htbp]
+\centering\small
+\caption{32 independent growth runs (seeds 0--31), sampled at shared
+checkpoints. SD is the sample standard deviation across runs;
+ranges give the observed extremes of $W_N$. Logarithms are natural.}
+\label{tab:experiments}
+\begin{tabular}{rccc}
+\toprule
+$N$ & $S_N/N$: mean (SD) & $W_N$: mean (range) & Mean $W_N/\ell_N$ \\
+\midrule
+$10^{3}$ & 1.9888 (0.0430) & 7.41 (6--10) & 2.07 \\
+$10^{4}$ & 1.9997 (0.0138) & 8.59 (8--10) & 2.07 \\
+$10^{5}$ & 1.9993 (0.0052) & 9.75 (9--10) & 2.07 \\
+$10^{6}$ & 1.9998 (0.0012) & 11.19 (10--13) & 2.13 \\
+\bottomrule
+\end{tabular}
+\end{table}
+}
 
 For $N=10^6$, the mean recourse is $1.3076$ per insertion, below the
 proved upper bound three. Pooling the last 500,000 updates of each run

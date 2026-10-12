@@ -115,6 +115,6 @@ cd paper
 latexmk -pdf -interaction=nonstopmode -halt-on-error recursive_matching.tex
 ```
 
-The bibliography is embedded in the source. `paper/llncs.cls` retains Springer's original notices and is distributed under CC BY 4.0; see `THIRD_PARTY_NOTICES.md`. The tree figure uses TikZ, so no external raster image is required. The table is included from `paper/verification/experiment_table.tex`.
+The bibliography is embedded in the source. `paper/llncs.cls` retains Springer's original notices and is distributed under CC BY 4.0; see `THIRD_PARTY_NOTICES.md`. The tree figure uses TikZ, so no external raster image is required. The generated table is included from `paper/verification/experiment_table.tex` when available. The main source also embeds an identical fallback copy of Table 1, allowing compilation when that extra file was omitted from an Overleaf upload.
 
 `CITATION.cff` gives the author and manuscript title. It does not claim an acceptance, publication venue, or DOI. The original software and generated data use the MIT license; that license does not change the rights in the manuscript or third-party LNCS class.
