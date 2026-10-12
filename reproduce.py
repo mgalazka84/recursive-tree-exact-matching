@@ -61,6 +61,12 @@ def main():
         preferential_actual = json.load(stream)
     with (ROOT / 'data/preferential_exact_checks.json').open() as stream:
         assert preferential_actual == json.load(stream), 'Preferential exact results differ'
+    run([sys.executable, ROOT / 'verification/verify_clt.py',
+         '--output', output / 'clt_exact_checks.json'])
+    with (output / 'clt_exact_checks.json').open() as stream:
+        clt_actual = json.load(stream)
+    with (ROOT / 'data/clt_exact_checks.json').open() as stream:
+        assert clt_actual == json.load(stream), 'CLT-proof exact results differ'
     if args.checks_only:
         print('All finite and API checks passed.', flush=True)
         return

@@ -1,0 +1,854 @@
+{
+  "max_n": 8,
+  "beta_values": [
+    "0",
+    "1/10",
+    "1/4",
+    "1/2",
+    "1",
+    "2",
+    "10"
+  ],
+  "arithmetic": "exact fractions",
+  "distinct_labelled_trees": 5914,
+  "centered_variance_identities": 252,
+  "gadget_replacements": 3474,
+  "finite_residual_variances_at_max_n": [
+    {
+      "beta": "0",
+      "n": 8,
+      "cutoff": 0,
+      "Var_centered_residual": {
+        "exact": "2706271/529200",
+        "decimal": 5.113890778533635
+      },
+      "root_eta": {
+        "exact": "116677/35280",
+        "decimal": 3.307171201814059
+      }
+    },
+    {
+      "beta": "0",
+      "n": 8,
+      "cutoff": 1,
+      "Var_centered_residual": {
+        "exact": "2706271/529200",
+        "decimal": 5.113890778533635
+      },
+      "root_eta": {
+        "exact": "116677/35280",
+        "decimal": 3.307171201814059
+      }
+    },
+    {
+      "beta": "0",
+      "n": 8,
+      "cutoff": 2,
+      "Var_centered_residual": {
+        "exact": "2706271/529200",
+        "decimal": 5.113890778533635
+      },
+      "root_eta": {
+        "exact": "116677/35280",
+        "decimal": 3.307171201814059
+      }
+    },
+    {
+      "beta": "0",
+      "n": 8,
+      "cutoff": 3,
+      "Var_centered_residual": {
+        "exact": "2554651/529200",
+        "decimal": 4.827382842025699
+      },
+      "root_eta": {
+        "exact": "115627/35280",
+        "decimal": 3.277409297052154
+      }
+    },
+    {
+      "beta": "0",
+      "n": 8,
+      "cutoff": 4,
+      "Var_centered_residual": {
+        "exact": "743657/176400",
+        "decimal": 4.2157426303854875
+      },
+      "root_eta": {
+        "exact": "66635/21168",
+        "decimal": 3.1479119425547997
+      }
+    },
+    {
+      "beta": "0",
+      "n": 8,
+      "cutoff": 5,
+      "Var_centered_residual": {
+        "exact": "1908341/529200",
+        "decimal": 3.606086545729403
+      },
+      "root_eta": {
+        "exact": "62743/21168",
+        "decimal": 2.9640495086923657
+      }
+    },
+    {
+      "beta": "0",
+      "n": 8,
+      "cutoff": 6,
+      "Var_centered_residual": {
+        "exact": "52903/17640",
+        "decimal": 2.9990362811791385
+      },
+      "root_eta": {
+        "exact": "481703/176400",
+        "decimal": 2.7307426303854876
+      }
+    },
+    {
+      "beta": "0",
+      "n": 8,
+      "cutoff": 7,
+      "Var_centered_residual": {
+        "exact": "387049/176400",
+        "decimal": 2.194155328798186
+      },
+      "root_eta": {
+        "exact": "387049/176400",
+        "decimal": 2.194155328798186
+      }
+    },
+    {
+      "beta": "1/10",
+      "n": 8,
+      "cutoff": 0,
+      "Var_centered_residual": {
+        "exact": "174378025060270735/37136151264715776",
+        "decimal": 4.695640746863091
+      },
+      "root_eta": {
+        "exact": "114525118080477995/37136151264715776",
+        "decimal": 3.083925344447094
+      }
+    },
+    {
+      "beta": "1/10",
+      "n": 8,
+      "cutoff": 1,
+      "Var_centered_residual": {
+        "exact": "174378025060270735/37136151264715776",
+        "decimal": 4.695640746863091
+      },
+      "root_eta": {
+        "exact": "114525118080477995/37136151264715776",
+        "decimal": 3.083925344447094
+      }
+    },
+    {
+      "beta": "1/10",
+      "n": 8,
+      "cutoff": 2,
+      "Var_centered_residual": {
+        "exact": "174378025060270735/37136151264715776",
+        "decimal": 4.695640746863091
+      },
+      "root_eta": {
+        "exact": "114525118080477995/37136151264715776",
+        "decimal": 3.083925344447094
+      }
+    },
+    {
+      "beta": "1/10",
+      "n": 8,
+      "cutoff": 3,
+      "Var_centered_residual": {
+        "exact": "164767066220273935/37136151264715776",
+        "decimal": 4.436837437616329
+      },
+      "root_eta": {
+        "exact": "16233365442999485/5305164466387968",
+        "decimal": 3.059917472087723
+      }
+    },
+    {
+      "beta": "1/10",
+      "n": 8,
+      "cutoff": 4,
+      "Var_centered_residual": {
+        "exact": "144758708154984055/37136151264715776",
+        "decimal": 3.898053600738207
+      },
+      "root_eta": {
+        "exact": "109602389057343215/37136151264715776",
+        "decimal": 2.951366399713044
+      }
+    },
+    {
+      "beta": "1/10",
+      "n": 8,
+      "cutoff": 5,
+      "Var_centered_residual": {
+        "exact": "124856966941069495/37136151264715776",
+        "decimal": 3.362140735884497
+      },
+      "root_eta": {
+        "exact": "103738038964942415/37136151264715776",
+        "decimal": 2.793451540669137
+      }
+    },
+    {
+      "beta": "1/10",
+      "n": 8,
+      "cutoff": 6,
+      "Var_centered_residual": {
+        "exact": "14996193296199665/5305164466387968",
+        "decimal": 2.8267160030968568
+      },
+      "root_eta": {
+        "exact": "96102417451056335/37136151264715776",
+        "decimal": 2.587839993595843
+      }
+    },
+    {
+      "beta": "1/10",
+      "n": 8,
+      "cutoff": 7,
+      "Var_centered_residual": {
+        "exact": "78360546206373695/37136151264715776",
+        "decimal": 2.110087974593816
+      },
+      "root_eta": {
+        "exact": "78360546206373695/37136151264715776",
+        "decimal": 2.110087974593816
+      }
+    },
+    {
+      "beta": "1/4",
+      "n": 8,
+      "cutoff": 0,
+      "Var_centered_residual": {
+        "exact": "26096855805185/6268370303538",
+        "decimal": 4.1632600726309015
+      },
+      "root_eta": {
+        "exact": "8748104364680/3134185151769",
+        "decimal": 2.791189397264034
+      }
+    },
+    {
+      "beta": "1/4",
+      "n": 8,
+      "cutoff": 1,
+      "Var_centered_residual": {
+        "exact": "26096855805185/6268370303538",
+        "decimal": 4.1632600726309015
+      },
+      "root_eta": {
+        "exact": "8748104364680/3134185151769",
+        "decimal": 2.791189397264034
+      }
+    },
+    {
+      "beta": "1/4",
+      "n": 8,
+      "cutoff": 2,
+      "Var_centered_residual": {
+        "exact": "26096855805185/6268370303538",
+        "decimal": 4.1632600726309015
+      },
+      "root_eta": {
+        "exact": "8748104364680/3134185151769",
+        "decimal": 2.791189397264034
+      }
+    },
+    {
+      "beta": "1/4",
+      "n": 8,
+      "cutoff": 3,
+      "Var_centered_residual": {
+        "exact": "24690306335825/6268370303538",
+        "decimal": 3.938871690762952
+      },
+      "root_eta": {
+        "exact": "8692577912720/3134185151769",
+        "decimal": 2.773473005515876
+      }
+    },
+    {
+      "beta": "1/4",
+      "n": 8,
+      "cutoff": 4,
+      "Var_centered_residual": {
+        "exact": "21858822879875/6268370303538",
+        "decimal": 3.4871620247989212
+      },
+      "root_eta": {
+        "exact": "8426554176020/3134185151769",
+        "decimal": 2.688594887658081
+      }
+    },
+    {
+      "beta": "1/4",
+      "n": 8,
+      "cutoff": 5,
+      "Var_centered_residual": {
+        "exact": "19053943601975/6268370303538",
+        "decimal": 3.0396965525825035
+      },
+      "root_eta": {
+        "exact": "8026215202220/3134185151769",
+        "decimal": 2.560861855174649
+      }
+    },
+    {
+      "beta": "1/4",
+      "n": 8,
+      "cutoff": 6,
+      "Var_centered_residual": {
+        "exact": "8120553978650/3134185151769",
+        "decimal": 2.590961792434818
+      },
+      "root_eta": {
+        "exact": "7486464667910/3134185151769",
+        "decimal": 2.3886478639222966
+      }
+    },
+    {
+      "beta": "1/4",
+      "n": 8,
+      "cutoff": 7,
+      "Var_centered_residual": {
+        "exact": "327278212970/164957113251",
+        "decimal": 1.984020006897253
+      },
+      "root_eta": {
+        "exact": "327278212970/164957113251",
+        "decimal": 1.984020006897253
+      }
+    },
+    {
+      "beta": "1/2",
+      "n": 8,
+      "cutoff": 0,
+      "Var_centered_residual": {
+        "exact": "237893557239/68539240000",
+        "decimal": 3.470910346233778
+      },
+      "root_eta": {
+        "exact": "23458980597/9791320000",
+        "decimal": 2.3958956092743366
+      }
+    },
+    {
+      "beta": "1/2",
+      "n": 8,
+      "cutoff": 1,
+      "Var_centered_residual": {
+        "exact": "237893557239/68539240000",
+        "decimal": 3.470910346233778
+      },
+      "root_eta": {
+        "exact": "23458980597/9791320000",
+        "decimal": 2.3958956092743366
+      }
+    },
+    {
+      "beta": "1/2",
+      "n": 8,
+      "cutoff": 2,
+      "Var_centered_residual": {
+        "exact": "237893557239/68539240000",
+        "decimal": 3.470910346233778
+      },
+      "root_eta": {
+        "exact": "23458980597/9791320000",
+        "decimal": 2.3958956092743366
+      }
+    },
+    {
+      "beta": "1/2",
+      "n": 8,
+      "cutoff": 3,
+      "Var_centered_residual": {
+        "exact": "225497431959/68539240000",
+        "decimal": 3.2900486197249927
+      },
+      "root_eta": {
+        "exact": "23349832437/9791320000",
+        "decimal": 2.3847481684798373
+      }
+    },
+    {
+      "beta": "1/2",
+      "n": 8,
+      "cutoff": 4,
+      "Var_centered_residual": {
+        "exact": "201688502199/68539240000",
+        "decimal": 2.9426719963483694
+      },
+      "root_eta": {
+        "exact": "22774167897/9791320000",
+        "decimal": 2.3259548147747187
+      }
+    },
+    {
+      "beta": "1/2",
+      "n": 8,
+      "cutoff": 5,
+      "Var_centered_residual": {
+        "exact": "178293292599/68539240000",
+        "decimal": 2.6013316254892818
+      },
+      "root_eta": {
+        "exact": "21862818297/9791320000",
+        "decimal": 2.2328775177402025
+      }
+    },
+    {
+      "beta": "1/2",
+      "n": 8,
+      "cutoff": 6,
+      "Var_centered_residual": {
+        "exact": "154738289799/68539240000",
+        "decimal": 2.2576598427265897
+      },
+      "root_eta": {
+        "exact": "20571359577/9791320000",
+        "decimal": 2.1009791914675446
+      }
+    },
+    {
+      "beta": "1/2",
+      "n": 8,
+      "cutoff": 7,
+      "Var_centered_residual": {
+        "exact": "122521971519/68539240000",
+        "decimal": 1.7876178889494543
+      },
+      "root_eta": {
+        "exact": "122521971519/68539240000",
+        "decimal": 1.7876178889494543
+      }
+    },
+    {
+      "beta": "1",
+      "n": 8,
+      "cutoff": 0,
+      "Var_centered_residual": {
+        "exact": "4241778188/1660133475",
+        "decimal": 2.555082619486364
+      },
+      "root_eta": {
+        "exact": "33705767996/18261468225",
+        "decimal": 1.8457315469222082
+      }
+    },
+    {
+      "beta": "1",
+      "n": 8,
+      "cutoff": 1,
+      "Var_centered_residual": {
+        "exact": "4241778188/1660133475",
+        "decimal": 2.555082619486364
+      },
+      "root_eta": {
+        "exact": "33705767996/18261468225",
+        "decimal": 1.8457315469222082
+      }
+    },
+    {
+      "beta": "1",
+      "n": 8,
+      "cutoff": 2,
+      "Var_centered_residual": {
+        "exact": "4241778188/1660133475",
+        "decimal": 2.555082619486364
+      },
+      "root_eta": {
+        "exact": "33705767996/18261468225",
+        "decimal": 1.8457315469222082
+      }
+    },
+    {
+      "beta": "1",
+      "n": 8,
+      "cutoff": 3,
+      "Var_centered_residual": {
+        "exact": "4034022458/1660133475",
+        "decimal": 2.4299386276757056
+      },
+      "root_eta": {
+        "exact": "33614056376/18261468225",
+        "decimal": 1.8407094085667364
+      }
+    },
+    {
+      "beta": "1",
+      "n": 8,
+      "cutoff": 4,
+      "Var_centered_residual": {
+        "exact": "3661913084/1660133475",
+        "decimal": 2.205794376864788
+      },
+      "root_eta": {
+        "exact": "6606191572/3652293645",
+        "decimal": 1.808778869969531
+      }
+    },
+    {
+      "beta": "1",
+      "n": 8,
+      "cutoff": 5,
+      "Var_centered_residual": {
+        "exact": "132094874/66405339",
+        "decimal": 1.9892206860053827
+      },
+      "root_eta": {
+        "exact": "32026588208/18261468225",
+        "decimal": 1.753779477827282
+      }
+    },
+    {
+      "beta": "1",
+      "n": 8,
+      "cutoff": 6,
+      "Var_centered_residual": {
+        "exact": "419866924/237161925",
+        "decimal": 1.7703808231443559
+      },
+      "root_eta": {
+        "exact": "174226460/104351247",
+        "decimal": 1.6696155054093411
+      }
+    },
+    {
+      "beta": "1",
+      "n": 8,
+      "cutoff": 7,
+      "Var_centered_residual": {
+        "exact": "3829912172/2608781175",
+        "decimal": 1.4680848699393119
+      },
+      "root_eta": {
+        "exact": "3829912172/2608781175",
+        "decimal": 1.4680848699393119
+      }
+    },
+    {
+      "beta": "2",
+      "n": 8,
+      "cutoff": 0,
+      "Var_centered_residual": {
+        "exact": "495180811539/306118758400",
+        "decimal": 1.6176101527628566
+      },
+      "root_eta": {
+        "exact": "190306852971/153059379200",
+        "decimal": 1.2433530958094987
+      }
+    },
+    {
+      "beta": "2",
+      "n": 8,
+      "cutoff": 1,
+      "Var_centered_residual": {
+        "exact": "495180811539/306118758400",
+        "decimal": 1.6176101527628566
+      },
+      "root_eta": {
+        "exact": "190306852971/153059379200",
+        "decimal": 1.2433530958094987
+      }
+    },
+    {
+      "beta": "2",
+      "n": 8,
+      "cutoff": 2,
+      "Var_centered_residual": {
+        "exact": "495180811539/306118758400",
+        "decimal": 1.6176101527628566
+      },
+      "root_eta": {
+        "exact": "190306852971/153059379200",
+        "decimal": 1.2433530958094987
+      }
+    },
+    {
+      "beta": "2",
+      "n": 8,
+      "cutoff": 3,
+      "Var_centered_residual": {
+        "exact": "473600401779/306118758400",
+        "decimal": 1.547113297644291
+      },
+      "root_eta": {
+        "exact": "190085679291/153059379200",
+        "decimal": 1.2419080770125062
+      }
+    },
+    {
+      "beta": "2",
+      "n": 8,
+      "cutoff": 4,
+      "Var_centered_residual": {
+        "exact": "438101759379/306118758400",
+        "decimal": 1.4311496677591384
+      },
+      "root_eta": {
+        "exact": "188102348331/153059379200",
+        "decimal": 1.228950158521223
+      }
+    },
+    {
+      "beta": "2",
+      "n": 8,
+      "cutoff": 5,
+      "Var_centered_residual": {
+        "exact": "404749266387/306118758400",
+        "decimal": 1.3221968771287163
+      },
+      "root_eta": {
+        "exact": "184239853227/153059379200",
+        "decimal": 1.2037148862746727
+      }
+    },
+    {
+      "beta": "2",
+      "n": 8,
+      "cutoff": 6,
+      "Var_centered_residual": {
+        "exact": "371008141011/306118758400",
+        "decimal": 1.2119745387383618
+      },
+      "root_eta": {
+        "exact": "177712333611/153059379200",
+        "decimal": 1.1610679106360833
+      }
+    },
+    {
+      "beta": "2",
+      "n": 8,
+      "cutoff": 7,
+      "Var_centered_residual": {
+        "exact": "81064429911/76529689600",
+        "decimal": 1.0592546544315267
+      },
+      "root_eta": {
+        "exact": "81064429911/76529689600",
+        "decimal": 1.0592546544315267
+      }
+    },
+    {
+      "beta": "10",
+      "n": 8,
+      "cutoff": 0,
+      "Var_centered_residual": {
+        "exact": "229371728450752987/627576530439398400",
+        "decimal": 0.3654880597433402
+      },
+      "root_eta": {
+        "exact": "20629386821799767/62757653043939840",
+        "decimal": 0.32871507810140826
+      }
+    },
+    {
+      "beta": "10",
+      "n": 8,
+      "cutoff": 1,
+      "Var_centered_residual": {
+        "exact": "229371728450752987/627576530439398400",
+        "decimal": 0.3654880597433402
+      },
+      "root_eta": {
+        "exact": "20629386821799767/62757653043939840",
+        "decimal": 0.32871507810140826
+      }
+    },
+    {
+      "beta": "10",
+      "n": 8,
+      "cutoff": 2,
+      "Var_centered_residual": {
+        "exact": "229371728450752987/627576530439398400",
+        "decimal": 0.3654880597433402
+      },
+      "root_eta": {
+        "exact": "20629386821799767/62757653043939840",
+        "decimal": 0.32871507810140826
+      }
+    },
+    {
+      "beta": "10",
+      "n": 8,
+      "cutoff": 3,
+      "Var_centered_residual": {
+        "exact": "224362668086069227/627576530439398400",
+        "decimal": 0.35750646686704723
+      },
+      "root_eta": {
+        "exact": "20628572773078127/62757653043939840",
+        "decimal": 0.3287021067954056
+      }
+    },
+    {
+      "beta": "10",
+      "n": 8,
+      "cutoff": 4,
+      "Var_centered_residual": {
+        "exact": "217328933575749787/627576530439398400",
+        "decimal": 0.34629869511466066
+      },
+      "root_eta": {
+        "exact": "20584889465681783/62757653043939840",
+        "decimal": 0.3280060433628589
+      }
+    },
+    {
+      "beta": "10",
+      "n": 8,
+      "cutoff": 5,
+      "Var_centered_residual": {
+        "exact": "211195126806111547/627576530439398400",
+        "decimal": 0.3365248962676202
+      },
+      "root_eta": {
+        "exact": "20467260516533303/62757653043939840",
+        "decimal": 0.32613170703185995
+      }
+    },
+    {
+      "beta": "10",
+      "n": 8,
+      "cutoff": 6,
+      "Var_centered_residual": {
+        "exact": "41006168556543487/125515306087879680",
+        "decimal": 0.3267025340147199
+      },
+      "root_eta": {
+        "exact": "4396343356447493/13642968053030400",
+        "decimal": 0.32224244309294336
+      }
+    },
+    {
+      "beta": "10",
+      "n": 8,
+      "cutoff": 7,
+      "Var_centered_residual": {
+        "exact": "49158424406079791/156894132609849600",
+        "decimal": 0.31332226124939033
+      },
+      "root_eta": {
+        "exact": "49158424406079791/156894132609849600",
+        "decimal": 0.31332226124939033
+      }
+    }
+  ],
+  "positive_variance_gadget": [
+    {
+      "beta": "0",
+      "signal_probability": {
+        "exact": "1/2",
+        "decimal": 0.5
+      },
+      "conditional_variance": {
+        "exact": "2/9",
+        "decimal": 0.2222222222222222
+      },
+      "asymptotic_variance_lower_bound": {
+        "exact": "1/180",
+        "decimal": 0.005555555555555556
+      }
+    },
+    {
+      "beta": "1/10",
+      "signal_probability": {
+        "exact": "11/21",
+        "decimal": 0.5238095238095238
+      },
+      "conditional_variance": {
+        "exact": "15/64",
+        "decimal": 0.234375
+      },
+      "asymptotic_variance_lower_bound": {
+        "exact": "3025/520128",
+        "decimal": 0.005815876092038883
+      }
+    },
+    {
+      "beta": "1/4",
+      "signal_probability": {
+        "exact": "5/9",
+        "decimal": 0.5555555555555556
+      },
+      "conditional_variance": {
+        "exact": "12/49",
+        "decimal": 0.24489795918367346
+      },
+      "asymptotic_variance_lower_bound": {
+        "exact": "50/8379",
+        "decimal": 0.005967299200381907
+      }
+    },
+    {
+      "beta": "1/2",
+      "signal_probability": {
+        "exact": "3/5",
+        "decimal": 0.6
+      },
+      "conditional_variance": {
+        "exact": "1/4",
+        "decimal": 0.25
+      },
+      "asymptotic_variance_lower_bound": {
+        "exact": "9/1540",
+        "decimal": 0.005844155844155844
+      }
+    },
+    {
+      "beta": "1",
+      "signal_probability": {
+        "exact": "2/3",
+        "decimal": 0.6666666666666666
+      },
+      "conditional_variance": {
+        "exact": "6/25",
+        "decimal": 0.24
+      },
+      "asymptotic_variance_lower_bound": {
+        "exact": "8/1575",
+        "decimal": 0.005079365079365079
+      }
+    },
+    {
+      "beta": "2",
+      "signal_probability": {
+        "exact": "3/4",
+        "decimal": 0.75
+      },
+      "conditional_variance": {
+        "exact": "10/49",
+        "decimal": 0.20408163265306123
+      },
+      "asymptotic_variance_lower_bound": {
+        "exact": "9/2548",
+        "decimal": 0.003532182103610675
+      }
+    },
+    {
+      "beta": "10",
+      "signal_probability": {
+        "exact": "11/12",
+        "decimal": 0.9166666666666666
+      },
+      "conditional_variance": {
+        "exact": "42/529",
+        "decimal": 0.07939508506616257
+      },
+      "asymptotic_variance_lower_bound": {
+        "exact": "847/1618740",
+        "decimal": 0.0005232464756539036
+      }
+    }
+  ],
+  "scope": "Finite identities only; asymptotic CLT and variance bounds are proved in the manuscript."
+}

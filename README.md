@@ -19,7 +19,7 @@ From the repository root:
 python3 reproduce.py
 ```
 
-This compiles the implementation, checks the query API against brute-force edge-subset optima, runs the Python finite checkers (including preferential attachment), enumerates all 46,234 recursive trees of sizes 1--9 using the complete matching implementation, and regenerates 32 growth trajectories to one million vertices. New raw data and aggregate results are written to `results/`, compared with the saved data in `data/`, and the manuscript table is refreshed.
+This compiles the implementation, checks the query API against brute-force edge-subset optima, runs the Python finite checkers (including preferential attachment and the CLT proof identities), enumerates all 46,234 recursive trees of sizes 1--9 using the complete matching implementation, and regenerates 32 growth trajectories to one million vertices. New raw data and aggregate results are written to `results/`, compared with the saved data in `data/`, and the manuscript table is refreshed.
 
 For the finite checks alone:
 
@@ -75,7 +75,13 @@ Theorem 13 identifies the parameter-dependent limiting variable `K_beta`, with `
 
 Theorem 15 gives `E S_N = mu_beta N - c_beta + o(1)` and `E |S_N/N - mu_beta| = O_beta(N^(-1/3))`, with `mu_beta = 1 + Phi_beta(1)`. The one-root constant `c_beta` has an explicit convergent integral. The seed-edge model has the same law of large numbers and an `O(1)` mean correction. Appendix H proves that the root changes state only finitely often almost surely and has a bounded expected total number of changes.
 
-**The full cumulative-cost CLT remains unproved.** Appendix H establishes a normal limit for each fixed size truncation using Ralaivaosaona–Wagner and identifies the missing estimate: `lim_{L -> infinity} limsup_{N -> infinity} Var(A_N - A_N^(L))/N = 0`. Positivity of the limiting variance also remains to be established. Finite enumeration does not establish either asymptotic claim.
+**Theorem 16 now proves the full preferential cumulative-cost CLT.** For every fixed `beta > 0`, `(S_N - mu_beta N)/(sigma_beta sqrt(N))` converges to the standard normal law, and `Var(S_N) = sigma_beta^2 N + o(N)`, with `0 < sigma_beta^2 < infinity`. The same mean and variance constants apply to the seed-edge degree model. Moreover `sqrt(N) E|S_N/N - mu_beta| -> sigma_beta sqrt(2/pi)`, improving the elementary bound in Theorem 15 to the optimal `N^(-1/2)` order.
+
+Appendix I replaces each large fringe history score by its size-conditioned mean, rather than discarding it. The omitted toll has mean zero at every size. Lemma 17 cancels the disjoint-fringe terms in its second moment, leaving an exact nested-pair identity and the bound `E(A_N - A_tilde_N^(L))^2 <= C_beta N L^(-zeta)`, where `zeta=1/(1+beta)`. The shifted approximating toll meets the boundedness and summable-decay conditions of the Ralaivaosaona–Wagner theorem. A four-vertex resampling argument preserves all exterior state histories and gives the positive lower bound
+
+`sigma_beta^2 >= 2(1+2 beta)(1+beta)^2 / ((2+beta)(3+2 beta)^2(4+3 beta)(5+4 beta))`.
+
+This lower bound is not claimed to be sharp. No closed form for the variance constant is asserted; the proof characterizes it by convergent approximation variances. The CLT at the uniform boundary `beta=0` is not claimed. Finite enumeration verifies identities used in the proof, not asymptotic normality itself.
 
 The reference code uses `std::vector` storage; an optional capacity reservation is used for fixed-horizon simulations. Without reservation, allocator effects have amortized rather than per-insertion guarantees. The paper's experimental counters measure state propagation and recourse, not allocator cost or wall-clock time. `verify_invariants()` is an independent O(n) diagnostic and is excluded from propagation counts.
 
@@ -89,9 +95,10 @@ The reference code uses `std::vector` storage; an optional capacity reservation 
 | `verification/matching_experiments.cpp` | Full matching checks on 46,234 trees; exact sums; 32 uniform growth runs | Theorem 1; experimental checks related to Theorems 7, 9, 10 |
 | `verification/verify_extensions.py` | Independently replayed subtree histories, exact covariance and fringe-path checks, finite PGFs | Lemmas 4, 6, 8; history identity in Theorem 9; path lower bound in Theorem 10 |
 | `verification/verify_preferential.py` | Exact weighted enumeration; update tails; fringe/history/witness variances; cumulative means; seed-edge comparison; certified limit intervals | Theorems 10, 11, 13–15; Corollary 12; Appendices D–H |
+| `verification/verify_clt.py` | Exact centered nested-pair identities, mean-preserving approximations, four-vertex replacements and positive-variance bounds | Theorem 16; Lemma 17; Appendix I |
 | `verification/summarize_experiments.py` | Aggregate raw output and regenerate the simulation table | Section 10, Table 1 |
 | `reproduce.py` | Compile, run checks, regenerate outputs and compare saved reference data | Complete reproduction entry point |
-| `paper/recursive_matching.tex` | LNCS manuscript: 12 main-text pages, 1 references page, and 7 appendix pages; all proofs and the exact TikZ diagram | Definitions, statements, and proofs |
+| `paper/recursive_matching.tex` | LNCS manuscript: 12 main-text pages, 1 references page, and 15 appendix pages; all proofs and the exact TikZ diagram | Definitions, statements, and proofs |
 
 The root-change probability checked in exact enumeration is `1/n`, equivalent to the expected root sensitivity being one. The finite-PGF checker compares enumerated update distributions with independently expanded generating functions. These checks are not formal verification or asymptotic proofs.
 
@@ -106,6 +113,14 @@ The checker enumerates all **5,914** increasing labelled trees with old size 1--
 It checks normalization, weighted root sensitivities, the finite affine fringe identity, three marked EGFs (`s=1,2,3`), and the mean bounds. A separate formal-series computation verifies coefficient domination through degree 24. Every finite update-tail coefficient is compared with the independently enumerated distribution. Exact fringe-path means and variances verify the conditional-binomial identities used in the maximum proof. Every insertion also checks the pointwise comparison between full-tree and two-component costs after removing the seed edge. Independent replay of every relative-label fringe history verifies the cumulative-cost identity, exact cumulative means, and compound-sum variance identities for fixed-size history scores. The last-insertion witness probability is checked against `[z^(m-1)] H(z)^k / (k! m [z^m] T(z))`; witness-count means and variances and their pathwise lower bound for the maximum are checked too.
 
 The same formal series give certified intervals for the limiting mean and tail probabilities: the remainder after degree `L` is at most `zeta^2/(L+zeta)`, where `zeta=1/(1+beta)`. Saved exact results and intervals are in `data/preferential_exact_checks.json`; the one-command reproduction compares them exactly. The interval guarantee follows from the proved coefficient majorant. The finite checks supplement the asymptotic proofs. No preferential-attachment Monte Carlo results are claimed.
+
+Run the CLT proof checker separately with:
+
+```sh
+python3 verification/verify_clt.py --output results/clt_exact_checks.json
+```
+
+It enumerates the same 5,914 trees for seven parameters, verifies 252 exact centered variance identities over every size cutoff, and checks 3,474 gadget replacements preserving every exterior state at every arrival prefix. It also checks the conditional gadget probabilities, conditional variances, and the resulting finite-size lower bound for variance. Reference data are in `data/clt_exact_checks.json` and are compared exactly by `reproduce.py --checks-only`.
 
 ## Saved data and simulation conventions
 
@@ -129,7 +144,7 @@ python3 verification/summarize_experiments.py data
 
 At N=10^6, the mean S/N is **1.9998017**, mean recourse is **1.307612**, and mean W/ell is **2.126309** (W ranges from 10 to 13). Pooled late-update variance is **1.192112**, compared with the limiting value **1.192695**.
 
-The observed recourse does not improve the proved upper bound three. The largest-update theorem is a first-order limit with leading constant one; its asymptotic constant is still a poor numerical approximation at these sizes. The data establish neither a convergence rate nor monotonicity. The total-cost rate is an upper bound without an optimality claim; a central limit theorem is not established in this manuscript.
+The observed recourse does not improve the proved upper bound three. For these uniform-attachment experiments, the largest-update theorem is a first-order limit with leading constant one; its asymptotic constant is still a poor numerical approximation at these sizes. The data establish neither a convergence rate nor monotonicity. The uniform total-cost rate in Theorem 9 is an upper bound without an optimality claim, and the uniform CLT remains open here. The preferential CLT and optimal mean-error order are proved separately in Theorem 16.
 
 ## Building and citing the manuscript
 

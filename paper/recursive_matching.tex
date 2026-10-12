@@ -38,7 +38,8 @@ largest inspection count divided by $\log N/\log\log N$ converges
 almost surely to one. For fixed positive reinforcement, a Lambert-$W$
 centering locates this maximum within a bounded additive error almost
 surely; cumulative inspections have a linear mean with a constant
-correction and an $L^1$ law of large numbers. These results transfer,
+correction and a nondegenerate central limit theorem, with variance
+asymptotically linear in $N$. These results transfer,
 with the appropriate mean correction, to attachment proportional
 to $\deg(v)+\delta$, $\delta>-1$, from a seed edge; ordinary
 degree-proportional attachment has expected inspection count at most
@@ -76,7 +77,9 @@ cost and a parameter-dependent limiting update law. For every fixed
 $\beta>0$, sensitive last-insertion fringe witnesses sharpen the maximum
 to an almost-sure bounded window around an explicit Lambert-$W$
 centering. We also obtain a quantitative cumulative-cost law and a
-constant-order mean correction; a full cumulative-cost CLT remains open.
+constant-order mean correction. A size-centered approximation and a
+four-vertex resampling argument yield a nondegenerate cumulative-cost
+central limit theorem for every fixed positive reinforcement.
 
 \begin{figure}[t]
 \centering
@@ -659,34 +662,46 @@ $c_\beta$, given in \eqref{eq:meancorrection}, such that
 For the seed-edge degree law with $\beta=1/(1+\delta)$, the same
 $L^1$ bound holds and $\E S_N=\mu_\beta N+O_\beta(1)$.
 \end{theorem}
-Appendix~\ref{app:affinetotal} proves these claims and a CLT for each
-fixed size truncation of the additive history functional. Passing to
-the full cumulative cost still requires a vanishing centered tail
-variance; we state the missing estimate explicitly in
-\eqref{eq:cltgap}. We do not claim a CLT for $S_N$.
+The mean and elementary concentration proof is in
+Appendix~\ref{app:affinetotal}. A sharper fluctuation result follows.
+
+\begin{theorem}\label{thm:affineCLT}
+For fixed $\beta>0$, there is a constant
+$0<\sigma_\beta^2<\infty$ such that
+\begin{equation}\label{eq:fullPAclt}
+ \frac{S_N-\mu_\beta N}{\sigma_\beta\sqrt N}
+ \xrightarrow{d}\mathcal N(0,1),\qquad
+ \operatorname{Var}(S_N)=\sigma_\beta^2N+o(N).
+\end{equation}
+Both conclusions hold for one-root affine attachment and for the
+seed-edge degree law with $\beta=1/(1+\delta)$, with the same
+$\mu_\beta$ and $\sigma_\beta^2$. In particular,
+\begin{equation}\label{eq:CLTabsmean}
+ \sqrt N\,\E|S_N/N-\mu_\beta|
+ \longrightarrow\sigma_\beta\sqrt{2/\pi}.
+\end{equation}
+\end{theorem}
+The proof in Appendix~\ref{app:PAclt} replaces the history score of
+each large fringe by its size-conditioned mean. The residual variance
+is $O_\beta(NL^{-1/(1+\beta)})$ at cutoff $L$, which permits
+Gaussian approximation. A four-vertex replacement proves strict
+positivity of the limiting variance. This strengthens the rate in
+Theorem~\ref{thm:affinetotal} to the optimal order $N^{-1/2}$.
+
 
 
 \section{Reproducible checks and finite-size behavior}\label{sec:experiments}
 
-The supplied implementation maintains an explicit matching using the
-lists and retention rule of Section~\ref{sec:algorithm}. Enumerating
-all 46,234 recursive trees of sizes 1--9 verifies the matching after
-every insertion against an independent static dynamic program. For
-$n\le8$, it confirms \eqref{eq:mainmeans}, the identity for
-$\E2^{K_n}$, and the root-change probability $1/n$. Separate checks
-cover the history identities and fixed-size covariance formula.
-For Theorem~\ref{thm:affine}, a separate exact-arithmetic checker
-recomputes states after all 46,233 insertions into the 5,914 increasing
-trees of sizes 1--8, for
-$\beta\in\{0,1/10,1/4,1/2,1,2,10\}$. It verifies the weighted
-sensitivity, marked EGFs, fringe identity, and mean bounds, including
-coefficient domination through degree 24. It also checks every finite
-update-tail coefficient, the exact fringe-path thinning identities,
-and the pointwise comparison with the two seed-edge components.
-Independent replay of every fringe history also checks cumulative means,
-fixed-size history variances, and the last-insertion witness EGF and
-thinning identities used in Theorem~\ref{thm:affinerefinedmax}. Four values
-$\delta\in\{-1/2,0,1,3\}$ check Corollary~\ref{cor:degree}.
+The explicit matching implementation is checked against an independent
+static DP on all 46,234 recursive trees of sizes 1--9. Exact weighted
+enumeration examines all 46,233 insertions into the 5,914 increasing
+trees of sizes 1--8, for seven reinforcement parameters and four degree
+offsets. It checks update means and tails, sensitivity EGFs through
+degree 24, fringe-history variances, maximum witnesses, and seed-edge
+comparisons. The CLT checker additionally verifies 252 centered
+nested-pair variance identities and 3,474 four-vertex replacements
+preserving exterior histories. These finite checks supplement the
+proofs; they do not establish an asymptotic normal law.
 
 We generated 32 independent trajectories to $N=10^6$ using
 \texttt{mt19937\_64}, seeds 0--31, and rejection sampling for uniform
@@ -732,7 +747,9 @@ uniform and affine attachment laws. Edge weights, deletions, and other
 attachment laws require separate analysis. The implementation, exact checker, raw data, and
 reproduction scripts are available on GitHub.\footnote{\url{https://github.com/mgalazka84/recursive-tree-exact-matching}.
 Uniform-experiment snapshot: \href{https://github.com/mgalazka84/recursive-tree-exact-matching/tree/0e4c10c707699f61ca2e83cd28de8ca4683ef03d}{\texttt{0e4c10c}}.}
-The new exact checker is \texttt{verification/verify\_preferential.py}.
+The preferential and CLT checkers are
+\texttt{verification/verify\_preferential.py} and
+\texttt{verification/verify\_clt.py}.
 Checks supplement the proofs; empirical recourse does not improve the
 proved upper bound.
 
@@ -745,9 +762,10 @@ expected maintenance to all nonnegative affine reinforcement and to
 ordinary degree-based attachment, with a limiting update law and sharp
 maximum for both conventions. For fixed positive reinforcement, the
 maximum lies in an almost-sure bounded window around a Lambert-$W$
-centering; cumulative inspections satisfy a quantitative law of large
-numbers and admit a constant-order mean correction. A full cumulative
-CLT, its nonzero limiting variance, and weighted matching remain open.
+centering; cumulative inspections satisfy a nondegenerate CLT with
+linear variance and admit a constant-order mean correction. The
+proof uses size-centered history scores and local resampling. A CLT
+at the uniform boundary $\beta=0$ and weighted matching remain open.
 
 \clearpage
 \begin{thebibliography}{9}
@@ -1403,7 +1421,7 @@ The bounded random error is absorbed in this remainder, proving
 \eqref{eq:secondordermaximum}.
 \end{proof}
 
-\section{Preferential cumulative cost and the remaining CLT step}\label{app:affinetotal}
+\section{Preferential cumulative mean and an elementary concentration bound}\label{app:affinetotal}
 
 \begin{proof}[Proof of Theorem~\ref{thm:affinetotal}]
 Fix $\beta>0$ and write $C(z)=C(z,1)=e^{H(z)}-1$,
@@ -1501,50 +1519,246 @@ to $O_\beta(m_1^{2/3}+m_2^{2/3}+1)=O_\beta(N^{2/3})$ in
 $L^1$. This proves the two remaining assertions.
 \end{proof}
 
-\paragraph{What is already normal, and what is not yet proved.}
-For each fixed $L$, the toll
-$f_L(T)=q(T)\ind\{|T|\le L\}$ is bounded and finitely supported.
-It retains only relative label order, which is allowed in the
-additive-functional theorem of Ralaivaosaona and
-Wagner~\cite{RalaivaosaonaWagner2019} (Theorem~2 in its extended
-abstract). The model parameter there is $\alpha=1/\beta$; ignoring
-the plane order gives exactly the present increasing-tree law.
-Thus, for some $\sigma_{\beta,L}^2\ge0$,
-\begin{equation}\label{eq:truncatedCLT}
- \frac{A_N^{(L)}-\E A_N^{(L)}}{\sqrt N}
- \xrightarrow{d}\mathcal N(0,\sigma_{\beta,L}^2),\qquad
- \frac{\operatorname{Var}A_N^{(L)}}N\longrightarrow
- \sigma_{\beta,L}^2.
-\end{equation}
-If this variance is zero, convergence to zero follows from the
-variance assertion. These are fixed-$L$ statements, not a CLT for
-the full cost.
 
-A sufficient missing estimate is
-\begin{equation}\label{eq:cltgap}
- \lim_{L\to\infty}\limsup_{N\to\infty}
- \frac1N\operatorname{Var}(A_N-A_N^{(L)})=0.
-\end{equation}
-Indeed, this would make $\sigma_{\beta,L}$ Cauchy by the $L^2$
-triangle inequality. Centered approximation and
-\eqref{eq:truncatedCLT} would then give a normal limit for $A_N$.
-The root correction is negligible even in $L^2$ at this scale:
-$q(T_N)^2/N\le q_\infty$ and $q(T_N)^2/N\to0$ almost surely,
-so dominated convergence gives $\E q(T_N)^2/N\to0$.
-Together with \eqref{eq:meancorrection}, this would prove
+\section{The preferential cumulative-cost CLT}\label{app:PAclt}
+
+Throughout this appendix, $\beta>0$ is fixed,
+$\zeta=(1+\beta)^{-1}\in(0,1)$ and $\theta=1-\zeta$.
+The symbol $q(T)$ continues to denote the root's history score.
+We first give a variance estimate for tolls centered separately at
+each tree size. All subtree histories retain relative arrival labels.
+
+\begin{lemma}\label{lem:centeredtollvariance}
+Let $f$ be a real toll with $\E f(T_k)=0$ for every $k\ge1$,
+and put $F(T)=\sum_{v\in T}f(T_v)$,
+$a_k=\|f(T_k)\|_2$. If
 \[
- \frac{S_N-\mu_\beta N}{\sqrt N}
- \xrightarrow{d}\mathcal N(0,\sigma_\beta^2),\qquad
- \sigma_\beta^2=\lim_{L\to\infty}\sigma_{\beta,L}^2.
+ D(f):=\sup_{k\ge1}\frac{a_k}{\sqrt k}
+       +\sum_{k\ge1}\frac{a_k}{k^{3/2}}<\infty,
 \]
-Strict positivity of $\sigma_\beta^2$ would additionally be needed
-for a nondegenerate standardized CLT.
-Neither \eqref{eq:cltgap} nor that positivity is established here.
-The $L^1$ tail bound used above does not suffice: with fixed $L$,
-its size $O_\beta(N/L)$ exceeds the $\sqrt N$ fluctuation scale.
-Nor can the cited theorem be applied directly to $q$: on an
-increasing path, $q(T)=|T|-1$, so its bounded-toll hypothesis fails;
-also $\E q(T_n)\ge1$ for $n\ge2$, violating its vanishing-mean
-condition. Thus the full CLT remains a conjectural next step.
+then $\operatorname{Var}F(T_n)\le C_\beta n D(f)^2$ for all $n$.
+\end{lemma}
+
+\begin{proof}
+The conditional fringe law gives $\E F(T_n)=0$.
+For two disjoint fringes, condition on their vertex sets and the
+contracted exterior history. The factorization of $w_\beta$ gives
+independent interiors with laws $T_k,T_l$, after increasing
+relabeling. Their toll product has conditional mean zero. Thus all
+disjoint-pair terms disappear when $\E F(T_n)^2$ is expanded.
+Only identical and nested fringes remain. Set
+\[
+ V_n=\E F(T_n)^2,\qquad
+ e_k=\E\{2f(T_k)F(T_k)-f(T_k)^2\}.
+\]
+For each ancestor fringe, the sum over its strict descendant fringes
+is $F(T_v)-f(T_v)$. Consequently \eqref{eq:affinefringe} gives the
+exact identity
+\begin{equation}\label{eq:centeredvarianceidentity}
+ V_n=e_n+(n-\theta)\sum_{k<n}
+       \frac{\zeta e_k}{(k-\theta)(k+1-\theta)}.
+\end{equation}
+This argument permits arbitrary real tolls; all sums for fixed $n$
+are finite. By Cauchy--Schwarz, $e_k\le2a_k\sqrt{V_k}$.
+Also $(n-\theta)\zeta/((k-\theta)(k+1-\theta))
+\le C_\beta n/k^2$. Therefore
+\[
+ V_n\le2a_n\sqrt{V_n}
+       +C_\beta n\sum_{k<n}\frac{a_k\sqrt{V_k}}{k^2}.
+\]
+Fix $n$ and choose $m\le n$ maximizing $V_m/m$.
+Write $B=\sqrt{V_m/m}$. If $B=0$ the claim is immediate;
+otherwise substitute $\sqrt{V_k}\le B\sqrt k$ for $k\le m$
+and divide the preceding inequality at $m$ by $mB$. This yields
+\[
+ B\le\frac{2a_m}{\sqrt m}
+       +C_\beta\sum_{k<m}\frac{a_k}{k^{3/2}}
+ \le C_\beta D(f).
+\]
+In particular $V_n\le n B^2$, proving the assertion.
+\end{proof}
+
+\begin{proof}[Proof of Theorem~\ref{thm:affineCLT}]
+We separate root-score estimates, Gaussian approximation, positivity,
+and transfer to the seed-edge law.
+
+\paragraph{Root-score estimates.}
+Use $a_j^{\star}=[z^j]C(z,1)\zeta^j$ to avoid confusion with the
+$a_k$ in Lemma~\ref{lem:centeredtollvariance}. From
+Appendix~\ref{app:affinetotal},
+\[
+ p_j=\PP(R_j=1)
+   =\frac{\Gamma(\zeta)j!}{\Gamma(j+\zeta)}a_j^{\star},
+ \qquad \sum_{j\ge1}j a_j^{\star}=\zeta C'(\zeta,1)<\infty.
+\]
+The gamma quotient is $O_\beta(j^{1-\zeta})$. Hence
+\begin{equation}\label{eq:weightedrootflips}
+ M_\beta:=\sum_{j\ge1}j^\zeta p_j<\infty.
+\end{equation}
+Write $g_k=\E q(T_k)=\sum_{j<k}p_j$ and
+$Q_\beta=\sum_{j\ge1}p_j$. Nonnegativity gives
+\begin{equation}\label{eq:rootmeantail}
+ 0\le Q_\beta-g_k\le M_\beta k^{-\zeta}.
+\end{equation}
+On one growth history, $q(T_k)=\sum_{j<k}R_j$. The $L^2$ triangle
+inequality followed by weighted Cauchy--Schwarz gives
+\begin{align}
+ \|q(T_k)\|_2
+ &\le\sum_{j<k}\sqrt{p_j}\notag\\
+ &\le\left(\sum_{j<k}j^\zeta p_j\right)^{1/2}
+       \left(\sum_{j<k}j^{-\zeta}\right)^{1/2}
+ =O_\beta(k^{(1-\zeta)/2}).\label{eq:rootL2}
+\end{align}
+No independence of the root flips is used.
+
+\paragraph{A mean-preserving approximation.}
+For each integer $L\ge1$, define
+\begin{equation}\label{eq:meanpreservingapprox}
+ \widetilde f_L(T)=g_{|T|}
+      +(q(T)-g_{|T|})\ind\{|T|\le L\},\qquad
+ \widetilde A_N^{(L)}=\sum_{v\in T_N}\widetilde f_L((T_N)_v).
+\end{equation}
+Unlike a cutoff that discards large fringes, this keeps their
+size-conditioned mean. Thus $\E\widetilde A_N^{(L)}=\E A_N$
+for every $N,L$. The residual toll
+\[
+ f_{>L}(T)=(q(T)-g_{|T|})\ind\{|T|>L\}
+\]
+is centered at every size. Its $L^2$ norm is zero for $k\le L$ and
+at most $C_\beta k^{(1-\zeta)/2}$ otherwise, by
+\eqref{eq:rootL2}. Therefore
+\[
+ D(f_{>L})=O_\beta(L^{-\zeta/2}).
+\]
+Lemma~\ref{lem:centeredtollvariance} proves the required uniform
+approximation estimate
+\begin{equation}\label{eq:CLTtailbound}
+ \E(A_N-\widetilde A_N^{(L)})^2
+ \le C_\beta N L^{-\zeta}\qquad(N,L\ge1).
+\end{equation}
+
+For fixed $L$, the shifted toll
+$h_L(T)=\widetilde f_L(T)-Q_\beta$ is bounded. For $k>L$ it is
+the deterministic value $g_k-Q_\beta$; by
+\eqref{eq:rootmeantail},
+\[
+ \E|h_L(T_k)|=O_\beta(k^{-\zeta}),\qquad
+ \sum_{k\ge1}\frac{\E|h_L(T_k)|}{k}<\infty.
+\]
+These are precisely the boundedness and vanishing summable-mean
+conditions of the GPORT additive-functional CLT of
+Ralaivaosaona and Wagner~\cite{RalaivaosaonaWagner2019}
+(Theorem~2 of the extended abstract). Their parameter is
+$\alpha=1/\beta$; after ignoring plane order the law is exactly
+our weighted increasing-tree law. Their theorem allows dependence on
+relative arrival labels, and a constant shift adds only the
+deterministic quantity $Q_\beta N$ to the functional. Hence, for
+some $\sigma_{\beta,L}^2\ge0$,
+\begin{equation}\label{eq:approximationCLT}
+ \frac{\widetilde A_N^{(L)}-\E A_N}{\sqrt N}
+ \xrightarrow{d}\mathcal N(0,\sigma_{\beta,L}^2),\qquad
+ \frac{\operatorname{Var}\widetilde A_N^{(L)}}N
+ \longrightarrow\sigma_{\beta,L}^2.
+\end{equation}
+When this variance is zero, convergence to zero follows from the
+variance assertion.
+
+The $L^2$ triangle inequality and \eqref{eq:CLTtailbound} show
+that $\sigma_{\beta,L}$ is Cauchy. Its finite limit
+$\sigma_\beta\ge0$ satisfies
+\begin{equation}\label{eq:varianceapproximationrate}
+ |\sigma_{\beta,L}-\sigma_\beta|
+ =O_\beta(L^{-\zeta/2}),\qquad
+ \operatorname{Var}(A_N)/N\longrightarrow\sigma_\beta^2.
+\end{equation}
+For clarity, compare two cutoffs by subtracting their residuals in
+\eqref{eq:CLTtailbound}, let $N\to\infty$, then let one cutoff
+tend to infinity. Comparing $A_N$ with one fixed cutoff proves the
+variance convergence. The same estimate bounds the difference of
+their centered characteristic functions, at scale $\sqrt N$, by
+$C_\beta|t|L^{-\zeta/2}$. Letting first $N\to\infty$ and then
+$L\to\infty$ in \eqref{eq:approximationCLT} proves
+\[
+ (A_N-\E A_N)/\sqrt N\xrightarrow{d}
+ \mathcal N(0,\sigma_\beta^2).
+\]
+The root correction in $S_N=N-1+A_N-q(T_N)$ is negligible in
+$L^2$ at this scale, by \eqref{eq:rootL2}. The mean expansion in
+Theorem~\ref{thm:affinetotal} then proves \eqref{eq:fullPAclt},
+apart from strict positivity, with centering $\mu_\beta N$.
+
+\paragraph{A strictly positive variance.}
+Consider four-vertex increasing trees whose root-state word, after
+each internal birth, is $(0,1,1,1)$. With relative labels $1,2,3,4$,
+there are exactly three such histories: vertices 2 and 3 attach to
+the root, and vertex 4 attaches to 1, 2, or 3. The star has weight
+$(1+\beta)(1+2\beta)$ and additive history score $A=1$.
+Each of the other two trees has weight $1+\beta$ and score $A=2$.
+Since $\tau_4=(2+\beta)(3+2\beta)$, this root-state word has
+probability
+\[
+ \eta_\beta=\frac{1+\beta}{2+\beta},
+\]
+and the conditional score variance is
+\[
+ v_\beta=\frac{2(1+2\beta)}{(3+2\beta)^2}>0.
+\]
+
+In $T_N$, $N>4$, condition on all vertex sets of size-four
+fringes, their root-state words, and the contracted exterior history.
+The interiors remain independent under this conditioning, each with
+its weighted law conditional on the specified word. Changing one
+interior while preserving its word leaves every exterior state
+history unchanged: the actual birth labels are fixed, and the
+exterior sees only this fringe root. Thus $A_N$ is the sum of a
+fixed exterior contribution and independent interior scores.
+The conditional variance formula gives
+\[
+ \operatorname{Var}(A_N)\ge
+ v_\beta\eta_\beta\,\E N_{N,4}.
+\]
+Use \eqref{eq:affinefringe} and
+\eqref{eq:varianceapproximationrate} to obtain the explicit bound
+\begin{equation}\label{eq:positivePAvariance}
+ \sigma_\beta^2\ge
+ \frac{2(1+2\beta)(1+\beta)^2}
+ {(2+\beta)(3+2\beta)^2(4+3\beta)(5+4\beta)}>0.
+\end{equation}
+This completes the one-root CLT. The displayed lower bound is not
+claimed to be sharp, and no closed form for $\sigma_\beta^2$ is
+asserted. Equation~\eqref{eq:varianceapproximationrate} characterizes
+it by convergent variances from the cited additive-functional theorem.
+
+\paragraph{The seed-edge degree law.}
+Use the independent component construction and exact cumulative
+identity from Appendix~\ref{app:affinetotal}:
+\[
+ S_N=1+S_{m_1}^{(1)}+S_{m_2}^{(2)}+q(T_{m_2}^{(2)}),
+ \qquad m_1+m_2=N.
+\]
+Conditional on sizes, the two internal histories are independent.
+The last term divided by $\sqrt N$ tends to zero in $L^2$,
+uniformly over splits, by \eqref{eq:rootL2}.
+For any deterministic sequence of splits, pass to a subsequence on
+which $m_i/N\to x_i$. If $x_i>0$, the one-root CLT gives an
+independent Gaussian contribution with variance $x_i\sigma_\beta^2$.
+If $x_i=0$, the uniform bounds
+$\operatorname{Var}(S_m)=O_\beta(m)$ and
+$\E S_m-\mu_\beta m=O_\beta(1)$ make that contribution vanish
+in $L^2$. Since $x_1+x_2=1$, every such subsequence has the same
+normal limit. This also proves convergence uniformly over splits,
+so averaging over the random allocation preserves the limit.
+The conditional variance of the sum of the two component costs is
+$\sigma_\beta^2N+o(N)$ uniformly over splits; their conditional
+mean differs from $\mu_\beta N$ by a bounded quantity.
+The root correction is $o(\sqrt N)$ in $L^2$, so total variance
+also converges as asserted in \eqref{eq:fullPAclt}.
+
+Finally, \eqref{eq:fullPAclt} and the bounded mean correction imply
+bounded second moments of $(S_N-\mu_\beta N)/\sqrt N$.
+Its absolute values are uniformly integrable. Convergence to the
+absolute first moment of the normal law proves
+\eqref{eq:CLTabsmean} in both attachment conventions.
+\end{proof}
 
 \end{document}
