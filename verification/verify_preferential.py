@@ -6,6 +6,8 @@ with the formal differential equations and the affine fringe identity.
 Also check every finite update-tail probability, fringe-path thinning,
 and the pathwise comparison with the two components of a seed-edge tree.
 Rational truncations give certified intervals for the limiting law.
+Replay all relative-label subtree histories to check cumulative means,
+fixed-size history-score variances, and last-insertion witnesses for maxima.
 These finite checks supplement, and do not replace, the proofs.
 """
 from fractions import Fraction as F
@@ -112,6 +114,47 @@ def states(children):
     return answer
 
 
+def history_statistics(parents, children):
+    """Recompute every prefix of every fringe, without propagation code."""
+    n = len(parents)
+    scores = [0] * n
+    by_size = [0] * (n + 1)
+    witnesses = [[0] * n for _ in range(n + 1)]
+    full_cost = full_maximum = root_witness = 0
+    for root in range(n):
+        vertices, stack = [], [root]
+        while stack:
+            v = stack.pop()
+            vertices.append(v)
+            stack.extend(children[v])
+        vertices.sort()
+        old = {root: 0}
+        last_witness = 0
+        for j in range(1, len(vertices)):
+            present = set(vertices[:j + 1])
+            new = {}
+            for v in reversed(vertices[:j + 1]):
+                new[v] = int(any(new[u] == 0 for u in children[v] if u in present))
+            changed = sum(old[v] != new[v] for v in old)
+            root_changed = int(old[root] != new[root])
+            scores[root] += root_changed
+            last_witness = changed if root_changed else 0
+            if root == 0:
+                cost = changed + 1 - root_changed
+                full_cost += cost
+                full_maximum = max(full_maximum, cost)
+            old = new
+        size = len(vertices)
+        by_size[size] += scores[root]
+        if last_witness:
+            witnesses[size][last_witness] += 1
+            assert full_maximum >= last_witness
+        if root == 0:
+            root_witness = last_witness
+    assert full_cost == n - 1 + sum(scores) - scores[0]
+    return scores[0], full_cost, root_witness, by_size, witnesses
+
+
 def tree_records(n):
     for prefix in product(*(range(i) for i in range(1, n))):
         parents = (-1,) + prefix
@@ -145,7 +188,8 @@ def tree_records(n):
                 uf = kf + 1 - rf
                 assert abs(changed - kf) <= rf
                 assert changed + 1 - root == uf + (rf if component[p] == 1 else 0)
-        yield parents, [len(xs) for xs in children], depth, costs, fringe_statistics(children)
+        yield (parents, [len(xs) for xs in children], depth, costs,
+               fringe_statistics(children), history_statistics(parents, children))
 
 
 def history_weight(parents, parameter, ordinary_degree=False):
@@ -172,24 +216,40 @@ def verify(max_n=8, series_degree=24):
     deltas = tuple(map(F, ("-1/2", "0", "1", "3")))
     formal = {b: series(b, series_degree) for b in betas}
     tails = {b: tail_series(formal[b][1][0], max_n, series_degree) for b in betas}
-    rows, degree_rows, fringe_rows = [], [], []
+    rows, degree_rows, fringe_rows, witness_rows = [], [], [], []
+    root_moments = {b: {} for b in betas}
     tree_count = update_count = 0
     for n in range(1, max_n + 1):
         sums = {b: [0] * 8 for b in betas}
         degree_sums = {d: [0] * 3 for d in deltas}
         path_sums = {b: [[0] * 4 for _ in range(n + 1)] for b in betas}
         histograms = {b: [0] * (n + 1) for b in betas}
-        for parents, children, depths, costs, (nk, xk) in tree_records(n):
+        histories = {b: [0] * 4 for b in betas}
+        last_histograms = {b: [0] * n for b in betas}
+        score_sums = {b: [[0, 0] for _ in range(n + 1)] for b in betas}
+        witness_sums = {b: [[[0, 0] for _ in range(n)] for _ in range(n + 1)] for b in betas}
+        for parents, children, depths, costs, (nk, xk), history in tree_records(n):
             tree_count += 1
             update_count += n
+            root_score, cumulative, last_witness, yk, witnesses = history
             for b in betas:
                 a, den = b.numerator, b.denominator
                 w = history_weight(parents, b)
                 total = sums[b]
                 total[0] += w
+                for j, x in enumerate((root_score, root_score ** 2, cumulative, cumulative ** 2)):
+                    histories[b][j] += w * x
+                last_histograms[b][last_witness] += w
                 for k in range(1, n + 1):
                     for j, x in enumerate((nk[k], nk[k] ** 2, xk[k], xk[k] ** 2)):
                         path_sums[b][k][j] += w * x
+                    score_sums[b][k][0] += w * yk[k]
+                    score_sums[b][k][1] += w * yk[k] ** 2
+                    if n == max_n:
+                        for r in range(1, k):
+                            x = witnesses[k][r]
+                            witness_sums[b][k][r][0] += w * x
+                            witness_sums[b][k][r][1] += w * x ** 2
                 for p, (k, u, root) in enumerate(costs):
                     mass = w * (den + a * children[p])
                     histograms[b][k] += mass
@@ -217,6 +277,24 @@ def verify(max_n=8, series_degree=24):
             assert ek <= F(n) / zn
             assert eu <= 1 + F(n - 1) / zn
             tree, marked = formal[b]
+            eq, eq2, es, es2 = [F(x, normalization) for x in histories[b]]
+            root_moments[b][n] = (eq, eq2)
+            zeta = 1 / (1 + b)
+            d, zpower = F(1), F(1)
+            predicted_eu, predicted_es, predicted_eq = F(1), F(n - 1), F(0)
+            for j in range(1, n):
+                d *= F(j) / (j + zeta)
+                zpower *= zeta
+                a_j = marked[1][j] * zpower
+                predicted_eu += d * a_j
+                predicted_es += (n - 1 - j) * d * a_j
+                predicted_eq += marked[1][j] / tree[j] / ((1 + b) * j - b)
+            assert eu == predicted_eu, (b, n, "exact inspection prefix")
+            assert es == predicted_es, (b, n, "exact cumulative mean")
+            assert eq == predicted_eq, (b, n, "root-history mean")
+            for r in range(1, n):
+                probability = F(last_histograms[b][r], normalization)
+                assert probability == tails[b][r][n - 1] / (n * tree[n]), (b, n, r, "integrated witness EGF")
             eb = F(total[3], normalization * den)
             assert eb <= 1
             if b == 0:
@@ -240,6 +318,10 @@ def verify(max_n=8, series_degree=24):
                 vn, vx = en2 - en ** 2, ex2 - ex ** 2
                 assert ex == pi * en
                 assert vx == pi ** 2 * vn + pi * (1 - pi) * en
+                ey, ey2 = [F(x, normalization) for x in score_sums[b][k]]
+                g, g2 = root_moments[b][k]
+                assert ey == en * g
+                assert ey2 - ey ** 2 == en * (g2 - g ** 2) + vn * g ** 2
                 if k < n:
                     q = b / (1 + b)
                     assert en == (n - q) * (1 - q) / ((k - q) * (k + 1 - q))
@@ -247,7 +329,18 @@ def verify(max_n=8, series_degree=24):
                     fringe_rows.append({"beta": str(b), "n": n, "k": k,
                                         "path_probability": rational(pi),
                                         "E_paths": rational(ex), "Var_paths": rational(vx)})
-            rows.append({"beta": str(b), "n": n, "E_B": rational(eb), "E_K": rational(ek), "E_U": rational(eu)})
+                    for r in range(1, k):
+                        probability = tails[b][r][k - 1] / (k * tree[k])
+                        ew, ew2 = [F(x, normalization) for x in witness_sums[b][k][r]]
+                        vw = ew2 - ew ** 2
+                        assert ew == en * probability
+                        assert vw == probability ** 2 * vn + probability * (1 - probability) * en
+                        witness_rows.append({"beta": str(b), "n": n, "fringe_size": k,
+                                             "root_sensitive_flips": r, "probability": rational(probability),
+                                             "E_witnesses": rational(ew), "Var_witnesses": rational(vw)})
+            rows.append({"beta": str(b), "n": n, "E_B": rational(eb), "E_K": rational(ek), "E_U": rational(eu),
+                         "E_root_history": rational(eq), "E_root_history_squared": rational(eq2),
+                         "E_S": rational(es), "Var_S": rational(es2 - es ** 2)})
         for d, total in degree_sums.items():
             if n < 2:
                 continue
@@ -278,9 +371,13 @@ def verify(max_n=8, series_degree=24):
                        "three marked generating functions", "affine fringe identity", "per-update bounds",
                        "formal coefficient domination", "ordinary-degree seed-edge corollary",
                        "all finite update-tail coefficients", "fringe-path mean and variance thinning",
-                       "pointwise seed-edge forest comparison", "certified limiting-law intervals"],
+                       "pointwise seed-edge forest comparison", "certified limiting-law intervals",
+                       "relative-label history identity", "exact cumulative mean and inspection prefix",
+                       "compound fringe-history variance", "integrated last-insertion witness EGF",
+                       "last-insertion witness thinning and pathwise maximum lower bound"],
             "affine_outdegree": rows, "ordinary_degree": degree_rows,
             "fringe_paths_at_max_n": fringe_rows,
+            "last_insertion_witnesses_at_max_n": witness_rows,
             "limiting_law_intervals": intervals,
             "interval_remainder_bound": "zeta^2/(series_degree+zeta), zeta=1/(1+beta)"}
 

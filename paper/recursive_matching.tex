@@ -35,7 +35,11 @@ linear space and constant-time queries. A coefficientwise comparison
 bounds expected weighted root sensitivity by one. We identify the
 limiting update distribution throughout this family and prove that the
 largest inspection count divided by $\log N/\log\log N$ converges
-almost surely to one. Both results transfer to attachment proportional
+almost surely to one. For fixed positive reinforcement, a Lambert-$W$
+centering locates this maximum within a bounded additive error almost
+surely; cumulative inspections have a linear mean with a constant
+correction and an $L^1$ law of large numbers. These results transfer,
+with the appropriate mean correction, to attachment proportional
 to $\deg(v)+\delta$, $\delta>-1$, from a seed edge; ordinary
 degree-proportional attachment has expected inspection count at most
 $3/2$. For uniform attachment we additionally obtain the exact mean
@@ -68,8 +72,11 @@ history and long fringe paths yield the global ones. We then prove a
 coefficientwise sensitivity bound for every affine attachment weight
 $1+\beta\lvert\ch(v)\rvert$, $\beta\ge0$, and transfer it to
 ordinary degree-based attachment. The extension gives constant expected
-cost, a parameter-dependent limiting update law, and the same sharp
-first-order maximum throughout the family.
+cost and a parameter-dependent limiting update law. For every fixed
+$\beta>0$, sensitive last-insertion fringe witnesses sharpen the maximum
+to an almost-sure bounded window around an explicit Lambert-$W$
+centering. We also obtain a quantitative cumulative-cost law and a
+constant-order mean correction; a full cumulative-cost CLT remains open.
 
 \begin{figure}[t]
 \centering
@@ -554,66 +561,7 @@ For every fixed $\beta>0$, uniformly in $n$ as $k\to\infty$,
 Consequently the maximum upper bound \eqref{eq:seqbound} also holds,
 with a constant depending on $a$ and $\beta$.
 \end{theorem}
-\begin{proof}[Mean bounds]
-Let $B_\beta(T)$ be the sum of weights
-$1+\beta\lvert\ch(w)\rvert$ over insertion sites $w$ that change the
-root state. We prove
-\begin{equation}\label{eq:affinesensitivity}
- \E B_\beta(T_k)\le1\qquad(k\ge1).
-\end{equation}
-Give an increasing tree weight
-$w_\beta(T)=\prod_v\prod_{j=0}^{|\ch(v)|-1}(1+\beta j)$.
-Every history of size $k$ has the same denominator
-$\tau_k=\prod_{i=1}^{k-1}Z_i$, so this is its probability multiplied
-by $\tau_k$. The tree EGF $\mathcal T$ satisfies
-\[
- \mathcal T'=\phi(\mathcal T),\qquad
- \phi(x)=(1-\beta x)^{-1/\beta},
-\]
-with $\phi(x)=e^x$ when $\beta=0$. Let $A_i$ restrict this EGF to
-root state $i$, and let $C$ additionally weight each tree by
-$B_\beta(T)$. Then
-\begin{equation}\label{eq:affineodes}
- A_0'=\phi(A_1),\qquad A_0+A_1=\mathcal T,\qquad
- C'=\phi'(A_1)(1+C),
-\end{equation}
-all series having zero constant term. The last identity follows from
-\eqref{eq:Brec} with direct-root contribution
-$1+\beta|\ch(r)|$: its EGF is
-$\phi(A_1)+\beta A_1\phi'(A_1)=\phi'(A_1)$, and a sensitive child
-contributes $\phi'(A_1)C$.
-
-Write $\preceq$ for coefficientwise comparison. Differentiating gives
-$C''=Q C'$ and $\mathcal T''=(Q+D)\mathcal T'$, where
-\begin{align*}
- Q&=\frac{(1+\beta)\phi(\mathcal T)-\beta\phi(A_1)}{1-\beta A_1},\\
- D&=\frac{\beta}{1-\beta A_1}
-       \bigl(A_0\phi'(\mathcal T)-\phi(\mathcal T)+\phi(A_1)\bigr).
-\end{align*}
-Both have nonnegative coefficients. For $Q$ use
-$\phi(\mathcal T)+\beta(\phi(\mathcal T)-\phi(A_1))$ in the numerator.
-For $D$, substituting a monomial $x^j$ into the parenthesis gives
-$\sum_{\ell=2}^j(\ell-1)\binom j\ell A_0^\ell A_1^{j-\ell}$.
-Since $C'(0)=\mathcal T'(0)=1$, coefficient induction yields
-$C'\preceq\mathcal T'$ and hence $C\preceq\mathcal T$.
-Now $[z^k]C/([z^k]\mathcal T)=\E B_\beta(T_k)$, proving
-\eqref{eq:affinesensitivity}. At $\beta=0$, $D=0$ and equality holds.
-
-A fringe subtree of size $k$ has total weight $Z_k$, independently
-of its shape. Conditional on receiving an insertion, its parent is
-chosen according to the same affine rule. Thus, conditional on size,
-its increasing relabeling has law $T_k$. For each vertex the expected
-weighted sensitivity is at most one. Averaging over parent choices,
-\[
- \E K_n=\frac1{Z_n}\E\sum_{v\in T_n}B_\beta((T_n)_v)
- \le\frac n{Z_n}.
-\]
-Pathwise, $U_n=1+$ the number of changed nonroot vertices. The same
-argument omitting the root gives its sharper bound in
-\eqref{eq:affinemeans}. Lemma~\ref{lem:implementation} proves the
-recourse, time, space, and query assertions. The tail proof is in
-Appendix~\ref{app:affinetails}.
-\end{proof}
+The proof is in Appendix~\ref{app:affinetails}.
 
 \begin{corollary}\label{cor:degree}
 Start from one edge, root it at either endpoint, and attach each new
@@ -672,7 +620,51 @@ certified finite-sum approximations are in
 Appendix~\ref{app:affinelimit}. At $\beta=0$, substituting
 $\zeta=1$ and $H(z)=\log(1+\R(z))$ in
 \eqref{eq:affinelimitfunctions} recovers Theorem~\ref{thm:limit}.
-Cumulative concentration for preferential attachment remains open here.
+
+\begin{theorem}\label{thm:affinerefinedmax}
+Fix $\beta>0$, put $H_\beta=H(\zeta)$, and define
+\begin{equation}\label{eq:lambertcenter}
+ r_\beta(N)=\frac{\log N}
+ {\operatorname W_0(\log N/(eH_\beta))},
+ \qquad \operatorname W_0(x)e^{\operatorname W_0(x)}=x.
+\end{equation}
+For one-root affine attachment,
+\begin{equation}\label{eq:boundedmaximum}
+ W_N=r_\beta(N)+O_\beta(1)\qquad\text{almost surely}.
+\end{equation}
+The same holds for the seed-edge degree law with
+$\beta=1/(1+\delta)$. In particular, writing $L=\log N$,
+$\ell=\log\log N$ and $m=\log\log\log N$,
+\begin{equation}\label{eq:secondordermaximum}
+ W_N=\frac L\ell+
+ \frac{L(m+1+\log H_\beta)}{\ell^2}
+ +O_\beta\!\left(\frac{L m^2}{\ell^3}\right)
+ \quad\text{almost surely}.
+\end{equation}
+\end{theorem}
+The bounded error means that a deterministic constant suffices after
+an almost surely finite random threshold. The proof in
+Appendix~\ref{app:refinedmaximum} retains the factorial scale of
+sensitive insertions. This result is for fixed $\beta>0$; it does not
+assert a uniform bound as $\beta\downarrow0$ or a Gumbel limit.
+
+\begin{theorem}\label{thm:affinetotal}
+For one-root affine attachment with fixed $\beta>0$, set
+$\mu_\beta=1+\Phi_\beta(1)$. There is a finite explicit constant
+$c_\beta$, given in \eqref{eq:meancorrection}, such that
+\begin{equation}\label{eq:affinetotal}
+ \E S_N=\mu_\beta N-c_\beta+o(1),\qquad
+ \E\left|S_N/N-\mu_\beta\right|=O_\beta(N^{-1/3}).
+\end{equation}
+For the seed-edge degree law with $\beta=1/(1+\delta)$, the same
+$L^1$ bound holds and $\E S_N=\mu_\beta N+O_\beta(1)$.
+\end{theorem}
+Appendix~\ref{app:affinetotal} proves these claims and a CLT for each
+fixed size truncation of the additive history functional. Passing to
+the full cumulative cost still requires a vanishing centered tail
+variance; we state the missing estimate explicitly in
+\eqref{eq:cltgap}. We do not claim a CLT for $S_N$.
+
 
 \section{Reproducible checks and finite-size behavior}\label{sec:experiments}
 
@@ -690,7 +682,10 @@ $\beta\in\{0,1/10,1/4,1/2,1,2,10\}$. It verifies the weighted
 sensitivity, marked EGFs, fringe identity, and mean bounds, including
 coefficient domination through degree 24. It also checks every finite
 update-tail coefficient, the exact fringe-path thinning identities,
-and the pointwise comparison with the two seed-edge components. Four values
+and the pointwise comparison with the two seed-edge components.
+Independent replay of every fringe history also checks cumulative means,
+fixed-size history variances, and the last-insertion witness EGF and
+thinning identities used in Theorem~\ref{thm:affinerefinedmax}. Four values
 $\delta\in\{-1/2,0,1,3\}$ check Corollary~\ref{cor:degree}.
 
 We generated 32 independent trajectories to $N=10^6$ using
@@ -748,8 +743,11 @@ law, cumulative linear cost, and a sharp first-order maximum under
 uniform recursive growth. A coefficientwise comparison extends constant
 expected maintenance to all nonnegative affine reinforcement and to
 ordinary degree-based attachment, with a limiting update law and sharp
-first-order maximum for both conventions. For preferential models, cumulative concentration and second-order maximum asymptotics remain
-open here, as do edge weights and a central limit theorem.
+maximum for both conventions. For fixed positive reinforcement, the
+maximum lies in an almost-sure bounded window around a Lambert-$W$
+centering; cumulative inspections satisfy a quantitative law of large
+numbers and admit a constant-order mean correction. A full cumulative
+CLT, its nonzero limiting variance, and weighted matching remain open.
 
 \clearpage
 \begin{thebibliography}{9}
@@ -793,6 +791,13 @@ Random tree recursions: which fixed points correspond to tangible sets
 of trees? Random Structures \& Algorithms \textbf{56}(3), 796--837 (2020).
 \doi{10.1002/rsa.20895}
 
+
+\bibitem{RalaivaosaonaWagner2019}
+Ralaivaosaona, D., Wagner, S.:
+A central limit theorem for additive functionals of increasing trees.
+Combinatorics, Probability and Computing \textbf{28}(4), 618--637 (2019).
+\doi{10.1017/S0963548318000585}
+Extended abstract: \url{https://arxiv.org/abs/1605.03918}
 
 \bibitem{SeelbachWagner2022}
 Seelbach Benkner, L., Wagner, S.:
@@ -938,7 +943,67 @@ $O(1+U_n)$ proves the final assertion.
 \end{proof}
 
 
-\section{Preferential-attachment tails}\label{app:affinetails}
+\section{Preferential-attachment sensitivity and tails}\label{app:affinetails}
+
+\begin{proof}[Mean bounds in Theorem~\ref{thm:affine}]
+Let $B_\beta(T)$ be the sum of weights
+$1+\beta\lvert\ch(w)\rvert$ over insertion sites $w$ that change the
+root state. We prove
+\begin{equation}\label{eq:affinesensitivity}
+ \E B_\beta(T_k)\le1\qquad(k\ge1).
+\end{equation}
+Give an increasing tree weight
+$w_\beta(T)=\prod_v\prod_{j=0}^{|\ch(v)|-1}(1+\beta j)$.
+Every history of size $k$ has the same denominator
+$\tau_k=\prod_{i=1}^{k-1}Z_i$, so this is its probability multiplied
+by $\tau_k$. The tree EGF $\mathcal T$ satisfies
+\[
+ \mathcal T'=\phi(\mathcal T),\qquad
+ \phi(x)=(1-\beta x)^{-1/\beta},
+\]
+with $\phi(x)=e^x$ when $\beta=0$. Let $A_i$ restrict this EGF to
+root state $i$, and let $C$ additionally weight each tree by
+$B_\beta(T)$. Then
+\begin{equation}\label{eq:affineodes}
+ A_0'=\phi(A_1),\qquad A_0+A_1=\mathcal T,\qquad
+ C'=\phi'(A_1)(1+C),
+\end{equation}
+all series having zero constant term. The last identity follows from
+\eqref{eq:Brec} with direct-root contribution
+$1+\beta|\ch(r)|$: its EGF is
+$\phi(A_1)+\beta A_1\phi'(A_1)=\phi'(A_1)$, and a sensitive child
+contributes $\phi'(A_1)C$.
+
+Write $\preceq$ for coefficientwise comparison. Differentiating gives
+$C''=Q C'$ and $\mathcal T''=(Q+D)\mathcal T'$, where
+\begin{align*}
+ Q&=\frac{(1+\beta)\phi(\mathcal T)-\beta\phi(A_1)}{1-\beta A_1},\\
+ D&=\frac{\beta}{1-\beta A_1}
+       \bigl(A_0\phi'(\mathcal T)-\phi(\mathcal T)+\phi(A_1)\bigr).
+\end{align*}
+Both have nonnegative coefficients. For $Q$ use
+$\phi(\mathcal T)+\beta(\phi(\mathcal T)-\phi(A_1))$ in the numerator.
+For $D$, substituting a monomial $x^j$ into the parenthesis gives
+$\sum_{\ell=2}^j(\ell-1)\binom j\ell A_0^\ell A_1^{j-\ell}$.
+Since $C'(0)=\mathcal T'(0)=1$, coefficient induction yields
+$C'\preceq\mathcal T'$ and hence $C\preceq\mathcal T$.
+Now $[z^k]C/([z^k]\mathcal T)=\E B_\beta(T_k)$, proving
+\eqref{eq:affinesensitivity}. At $\beta=0$, $D=0$ and equality holds.
+
+A fringe subtree of size $k$ has total weight $Z_k$, independently
+of its shape. Conditional on receiving an insertion, its parent is
+chosen according to the same affine rule. Thus, conditional on size,
+its increasing relabeling has law $T_k$. For each vertex the expected
+weighted sensitivity is at most one. Averaging over parent choices,
+\[
+ \E K_n=\frac1{Z_n}\E\sum_{v\in T_n}B_\beta((T_n)_v)
+ \le\frac n{Z_n}.
+\]
+Pathwise, $U_n=1+$ the number of changed nonroot vertices. The same
+argument omitting the root gives its sharper bound in
+\eqref{eq:affinemeans}. Lemma~\ref{lem:implementation} proves the
+recourse, time, space, and query assertions. The tail proof follows below.
+\end{proof}
 
 We prove the remaining claims of Theorem~\ref{thm:affine}. Fix $\beta>0$
 and put $\zeta=(1+\beta)^{-1}$ and $q=1-\zeta$. All generating
@@ -967,7 +1032,7 @@ Consequently both
 \]
 are finite and positive, and
 $\partial_z C(\zeta,s)=h_\beta e^{sH_\beta}$.
-All coefficients of $C(z,s)$ are nonnegative.
+All coefficients of $C(z,s)$ in both variables are nonnegative.
 
 Let $N_{n,k}$ count fringe subtrees of size $k$. Their total attachment
 weight is $(1+\beta)(k-q)$, so the same recurrence as in
@@ -1008,6 +1073,12 @@ $b_k(s)\zeta^k$ in \eqref{eq:affineF} is at most $k/\zeta$, and
  F_{n,\beta}(s)\le\sum_{k\ge1} k b_k(s)\zeta^{k-1}
  =h_\beta e^{sH_\beta}.
 \]
+
+The inequality also holds coefficientwise in $s$. Extracting the
+coefficient of $s^{k-1}$ gives, for every $n,k\ge1$,
+\begin{equation}\label{eq:factorialupper}
+ \PP(K_n\ge k)\le h_\beta\frac{H_\beta^{k-1}}{(k-1)!}.
+\end{equation}
 For $s\ge1$ the geometric-sum identity yields
 \begin{equation}\label{eq:affinepgfbound}
  \E s^{K_n}\le 1+(s-1)h_\beta e^{sH_\beta}.
@@ -1220,5 +1291,260 @@ one-root law as $m\to\infty$. Since
 $\ell_m/\ell_N\to1$ uniformly for $N/2\le m\le N$, the two
 bounds give the almost-sure limit.
 This proves \eqref{eq:sharpmaximum} for every fixed $\delta>-1$.
+
+
+\section{A bounded window for the preferential maximum}\label{app:refinedmaximum}
+
+\begin{proof}[Proof of Theorem~\ref{thm:affinerefinedmax}]
+Fix $\beta>0$ and abbreviate $H=H_\beta$, $h=h_\beta$,
+$\zeta=(1+\beta)^{-1}$ and $r=r_\beta(N)$. The upper bound follows
+from \eqref{eq:factorialupper} and $U_n\le K_n+1$: for integers
+$u\ge2$,
+\begin{equation}\label{eq:maximumfactorialupper}
+ \PP(W_N\ge u)\le Nh\frac{H^{u-2}}{(u-2)!}.
+\end{equation}
+We next construct lower-bound witnesses on the same factorial scale.
+
+For an increasing tree of size $j+1$, call its last insertion a
+$k$-witness if it changes the root and exactly $k$ old states.
+Deleting its largest-labelled leaf leaves a root-sensitive insertion
+site at depth $k-1$ in a size-$j$ tree. Its weight is the old tree
+weight times the insertion weight. By \eqref{eq:affinemarked},
+the weighted EGF of these new trees is
+\begin{equation}\label{eq:witnessEGF}
+ E_k(z)=\int_0^z\frac{H(t)^k}{k!}\,dt.
+\end{equation}
+Indeed, $[s^{k-1}]C(z,s)=H(z)^k/k!$, and integration changes
+the denominator $j!$ into $(j+1)!$ when the largest label is inserted.
+
+Introduce a positive integer-valued variable $Y$ by
+\[
+ \PP(Y=j)=\frac{[z^j]H(z)\,\zeta^j}{H},\qquad
+ a:=\E Y=\frac{\zeta h}{H}<\infty.
+\]
+In particular $a\ge1$. Let $V_k=Y_1+\cdots+Y_k$ for independent
+copies. Markov's inequality gives
+$\PP(k\le V_k\le\lceil2ak\rceil)\ge1/2$.
+There is therefore an integer $j=j(k)$ in this interval such that
+$\PP(V_k=j)\ge c_1/k$, where constants depend only on $\beta$.
+Write $t_m=[z^m]\mathcal T(z)$. For this $j$, the probability
+$p_{j+1,k}$ that a size-$(j+1)$ tree is a $k$-witness is exactly
+\begin{align}
+ p_{j+1,k}
+ &=\frac{[z^j]H(z)^k}{k!(j+1)t_{j+1}}\notag\\
+ &=\frac{\Gamma(\zeta)j!}{\Gamma(j+\zeta)}
+      \frac{H^k}{k!}\,\PP(V_k=j)
+ \ge c_2\,k^{-\zeta}\frac{H^k}{k!}.
+ \label{eq:witnessprobability}
+\end{align}
+Here $j!/\Gamma(j+\zeta)\asymp j^{1-\zeta}$ and $j\asymp k$.
+
+Let $X_{N,k}$ count such size-$(j+1)$ fringe witnesses in $T_N$.
+For $j+1<N$, \eqref{eq:affinefringe} gives
+\begin{equation}\label{eq:witnessmean}
+ \lambda_{N,k}:=\E X_{N,k}
+ \ge c_3\,\frac{N H^k}{k!\,k^{2+\zeta}}.
+\end{equation}
+The weight-factorization argument in Appendix~\ref{app:affinemaximum}
+also applies to events retaining the relative order of labels.
+Consequently, conditional on the number of size-$(j+1)$ fringes,
+$X_{N,k}$ is binomial with success probability $p_{j+1,k}$.
+The size-uniform variance bound then yields
+$\operatorname{Var}X_{N,k}=O_\beta(\lambda_{N,k})$.
+Every witness certifies $W_N\ge k$: at its last internal birth,
+all its then existing descendants belong to this final fringe,
+and the $k$ local state changes are also changes in the full tree.
+External insertions do not affect the subtree states. Hence
+\begin{equation}\label{eq:witnessfailure}
+ \PP(W_N<k)\le\PP(X_{N,k}=0)
+ \le C_\beta\,\lambda_{N,k}^{-1}.
+\end{equation}
+
+To locate the window, let $f(x)=x\log(x/(eH))$; then
+$f(r)=\log N$. Stirling's formula, uniformly for bounded real $b$
+with $r+b$ an integer, gives
+\begin{equation}\label{eq:windowstirling}
+ N\frac{H^{r+b}}{(r+b)!}
+ =\Theta_\beta(r^{-b-1/2}).
+\end{equation}
+For any fixed $D>7/2+\zeta$, put
+$u_N=\lceil r+D\rceil$ and $k_N=\lfloor r-D\rfloor$.
+Equations \eqref{eq:maximumfactorialupper}--\eqref{eq:windowstirling}
+give
+\[
+ \PP(W_N\ge u_N)=O_\beta(r^{3/2-D}),\qquad
+ \PP(W_N<k_N)=O_\beta(r^{5/2+\zeta-D}).
+\]
+For instance $D=6$ makes both bounds summable along $N=2^i$,
+because $r_\beta(2^i)\asymp i/\log i$.
+The first Borel--Cantelli lemma gives a bounded window almost surely
+along this subsequence. Also
+$r_\beta(2N)-r_\beta(N)=O_\beta(1/\log r_\beta(N))=o(1)$,
+by $f'(x)=\log(x/H)$.
+Monotonicity of $W_N$ and $r_\beta(N)$ therefore interpolates the
+bounded window to every sufficiently large $N$.
+
+For the seed-edge model, use $W_N^F\le W_N\le W_N^F+1$ from
+Appendix~\ref{app:affinemaximum}. Both infinite component histories
+satisfy the bounded window on a common probability-one event.
+The larger component has at least $N/2$ vertices and
+$r_\beta(N)-r_\beta(N/2)=o(1)$, while both component maxima are
+bounded above by their size-$N$ maxima. This proves the same result.
+
+Finally, solving $r\log(r/(eH))=L$ gives
+\[
+ r=\frac L\ell+
+   \frac{L(\log\ell+1+\log H)}{\ell^2}
+   +O_\beta\!\left(\frac{L(\log\ell)^2}{\ell^3}\right).
+\]
+This follows by substitution in $f(r)=L$ and the mean value theorem,
+or by the expansion of the positive Lambert-$W$ branch.
+The bounded random error is absorbed in this remainder, proving
+\eqref{eq:secondordermaximum}.
+\end{proof}
+
+\section{Preferential cumulative cost and the remaining CLT step}\label{app:affinetotal}
+
+\begin{proof}[Proof of Theorem~\ref{thm:affinetotal}]
+Fix $\beta>0$ and write $C(z)=C(z,1)=e^{H(z)}-1$,
+$\zeta=(1+\beta)^{-1}$, and
+\[
+ a_j=[z^j]C(z)\,\zeta^j,\qquad
+ d_j=\frac{\zeta\Gamma(\zeta)j!}{\Gamma(j+1+\zeta)},\qquad
+ b_j=d_j a_j.
+\]
+Then $\kappa_\beta:=\sum_{j\ge1}b_j=\Phi_\beta(1)$ and
+$\mu_\beta=1+\kappa_\beta$.
+The final term of \eqref{eq:affineF} at $s=1$ is exactly the root
+flip probability
+\[
+ p_n:=\PP(R_n=1)
+ =\frac{\Gamma(\zeta)n!}{\Gamma(n+\zeta)}a_n.
+\]
+It cancels when $\E U_n=1+\E K_n-p_n$ is formed. Thus
+\begin{equation}\label{eq:exactPAtotalmean}
+ \E U_n=1+\sum_{j<n}b_j,\qquad
+ \E S_N=N-1+\sum_{j=1}^{N-2}(N-1-j)b_j.
+\end{equation}
+All series are nonnegative and
+$\sum j a_j=\zeta C'(\zeta)<\infty$;
+also $0<d_j\le1$. Hence $\sum j b_j<\infty$. Set
+\begin{equation}\label{eq:meancorrection}
+ \begin{split}
+ c_\beta&=\mu_\beta+\sum_{j\ge1}j b_j\\
+ &=\mu_\beta+\zeta^2\int_0^1
+ x(1-x)^{\zeta-1}H'(\zeta x)e^{H(\zeta x)}\,dx.
+ \end{split}
+\end{equation}
+The exact remainder in
+$\E S_N-(\mu_\beta N-c_\beta)$ is
+$\sum_{j\ge N-1}(j-N+1)b_j$, which is nonnegative and tends to
+zero. This proves the mean assertion with its explicit correction.
+
+Let $q(T)$ again count changes of the root during its increasing-label
+history. Since $\Gamma(\zeta)n!/\Gamma(n+\zeta)\le n/\zeta$,
+\begin{equation}\label{eq:PArootfinite}
+ \sup_n\E q(T_n)=\sum_{n\ge1}p_n
+ =:Q_\beta\le C'(\zeta)=h_\beta e^{H_\beta}<\infty.
+\end{equation}
+Along the growth coupling, $q(T_n)$ increases to an integrable,
+almost surely finite $q_\infty$. In particular the root state changes
+only finitely often almost surely. Moreover
+$\E q(T_k)^2\le(k-1)Q_\beta$.
+
+The pathwise additive identities \eqref{eq:historyidentity} hold
+under every attachment law. For $k<N$, put
+$Y_{N,k}=\sum_{v:|(T_N)_v|=k}q((T_N)_v)$.
+Conditional on the number of size-$k$ fringes, their scores are
+independent copies of $q(T_k)$, by the history-weight factorization.
+The random-sum variance formula and the size-uniform variance bound
+from Appendix~\ref{app:affinemaximum} yield
+\[
+ \operatorname{Var}Y_{N,k}
+ =\E N_{N,k}\operatorname{Var}q(T_k)
+  +\operatorname{Var}N_{N,k}(\E q(T_k))^2
+ =O_\beta(N/k).
+\]
+For $2\le L<N$, let $A_N^{(L)}=\sum_{k\le L}Y_{N,k}$.
+The $L^2$ triangle inequality gives
+$\operatorname{Var}(A_N^{(L)})^{1/2}=O_\beta(\sqrt{NL})$.
+The omitted part is nonnegative; \eqref{eq:affinefringe} and
+\eqref{eq:PArootfinite} give
+\[
+ \E(A_N-A_N^{(L)})=O_\beta(N/L+1).
+\]
+Consequently
+\[
+ \E|A_N-\E A_N|
+ \le \operatorname{Var}(A_N^{(L)})^{1/2}
+       +2\E(A_N-A_N^{(L)})
+ =O_\beta(\sqrt{NL}+N/L+1).
+\]
+Take $L=\lfloor N^{1/3}\rfloor$ and use
+$S_N=N-1+A_N-q(T_N)$, the bounded mean of $q(T_N)$, and the
+mean assertion already proved. This yields \eqref{eq:affinetotal}.
+
+For the seed-edge model, let $S_m^{(i)}$ be the cumulative
+within-component cost, with $S_1^{(i)}=0$. With the full tree rooted
+at seed endpoint $a$, and component 2 rooted at $b$, the pointwise
+inspection comparison gives the exact identity
+\[
+ S_N=1+S_{m_1}^{(1)}+S_{m_2}^{(2)}+q(T_{m_2}^{(2)}),
+ \qquad m_1+m_2=N.
+\]
+The initial 1 is the insertion forming the seed edge. Conditional on
+the component sizes, the internal histories have the independent
+affine laws. The one-root estimates hold with uniform constants for
+all positive sizes, after enlarging the constants for finitely many
+small sizes. Their errors sum to $O_\beta(1)$ for the means and
+to $O_\beta(m_1^{2/3}+m_2^{2/3}+1)=O_\beta(N^{2/3})$ in
+$L^1$. This proves the two remaining assertions.
+\end{proof}
+
+\paragraph{What is already normal, and what is not yet proved.}
+For each fixed $L$, the toll
+$f_L(T)=q(T)\ind\{|T|\le L\}$ is bounded and finitely supported.
+It retains only relative label order, which is allowed in the
+additive-functional theorem of Ralaivaosaona and
+Wagner~\cite{RalaivaosaonaWagner2019} (Theorem~2 in its extended
+abstract). The model parameter there is $\alpha=1/\beta$; ignoring
+the plane order gives exactly the present increasing-tree law.
+Thus, for some $\sigma_{\beta,L}^2\ge0$,
+\begin{equation}\label{eq:truncatedCLT}
+ \frac{A_N^{(L)}-\E A_N^{(L)}}{\sqrt N}
+ \xrightarrow{d}\mathcal N(0,\sigma_{\beta,L}^2),\qquad
+ \frac{\operatorname{Var}A_N^{(L)}}N\longrightarrow
+ \sigma_{\beta,L}^2.
+\end{equation}
+If this variance is zero, convergence to zero follows from the
+variance assertion. These are fixed-$L$ statements, not a CLT for
+the full cost.
+
+A sufficient missing estimate is
+\begin{equation}\label{eq:cltgap}
+ \lim_{L\to\infty}\limsup_{N\to\infty}
+ \frac1N\operatorname{Var}(A_N-A_N^{(L)})=0.
+\end{equation}
+Indeed, this would make $\sigma_{\beta,L}$ Cauchy by the $L^2$
+triangle inequality. Centered approximation and
+\eqref{eq:truncatedCLT} would then give a normal limit for $A_N$.
+The root correction is negligible even in $L^2$ at this scale:
+$q(T_N)^2/N\le q_\infty$ and $q(T_N)^2/N\to0$ almost surely,
+so dominated convergence gives $\E q(T_N)^2/N\to0$.
+Together with \eqref{eq:meancorrection}, this would prove
+\[
+ \frac{S_N-\mu_\beta N}{\sqrt N}
+ \xrightarrow{d}\mathcal N(0,\sigma_\beta^2),\qquad
+ \sigma_\beta^2=\lim_{L\to\infty}\sigma_{\beta,L}^2.
+\]
+Strict positivity of $\sigma_\beta^2$ would additionally be needed
+for a nondegenerate standardized CLT.
+Neither \eqref{eq:cltgap} nor that positivity is established here.
+The $L^1$ tail bound used above does not suffice: with fixed $L$,
+its size $O_\beta(N/L)$ exceeds the $\sqrt N$ fluctuation scale.
+Nor can the cited theorem be applied directly to $q$: on an
+increasing path, $q(T)=|T|-1$, so its bounded-toll hypothesis fails;
+also $\E q(T_n)\ge1$ for $n\ge2$, violating its vanishing-mean
+condition. Thus the full CLT remains a conjectural next step.
 
 \end{document}
