@@ -29,11 +29,13 @@ Adam Mickiewicz University, Pozna\'n, Poland}
 \maketitle
 
 \begin{abstract}
-We study the execution cost of local maximum-matching maintenance in
-trees growing by affine preferential attachment. A new leaf selects
-parent $v$ with weight $1+\beta|\ch(v)|$, where $\ch(v)$ is its set
-of children and $\beta>0$ is fixed. For the standard binary-state propagation
-algorithm, we prove a nondegenerate central limit theorem for cumulative
+Pairing as many adjacent vertices as possible in a growing tree requires
+repeated corrections to a matching. How much work do these corrections
+take, and how large can a single update become? We answer these questions
+for the standard local algorithm under affine preferential attachment:
+a new leaf selects parent $v$ with weight $1+\beta|\ch(v)|$, where
+$\ch(v)$ is its set of children and $\beta>0$ is fixed.
+We prove a nondegenerate central limit theorem for cumulative
 vertex inspections, with linear asymptotic variance and an explicit
 constant correction to the linear mean. The largest update lies almost
 surely within a bounded additive distance of an explicit Lambert-$W$
@@ -51,45 +53,74 @@ cost analysis under reinforcement.
 
 \section{Introduction}
 
-When a graph acquires a new vertex, a maintained optimum may need
-changes far from that vertex. Even on a tree, adding one leaf can
-change the matching dynamic program along a long ancestor path.
-Preferential attachment gives older or more highly connected vertices
-larger chances of receiving that leaf. We ask how this reinforcement
-affects the total work and the longest update of a local exact
-matching algorithm.
+A matching pairs adjacent vertices so that no vertex belongs to two
+pairs. Suppose a tree grows one leaf at a time and we want as many
+pairs as possible after every insertion. One new vertex can trigger a
+chain of corrections, although the optimum number of pairs increases
+by at most one. How much work do these corrections require over the
+lifetime of the tree, and how large can a single update become?
+A bounded expected update cost gives an average budget, but leaves
+its fluctuations and the largest delay unresolved.
 
-Our principal results concern the dependent sequence of update costs.
-Cumulative inspections have Gaussian fluctuations of order $\sqrt N$
-with a strictly positive variance constant. The maximum has an
-almost-sure bounded window around a deterministic Lambert-$W$
-centering, which also gives its second-order asymptotic expansion.
-An explicit limiting update law and a weighted sensitivity comparison
-provide the local estimates needed for these global results.
+We study affine preferential attachment: vertices with more children
+are more likely to receive the next leaf. A vertex with $c$ children
+has selection weight $1+\beta c$, where $\beta>0$ is fixed.
+The standard local matching algorithm revises information from the
+insertion point towards the root and stops when no further change is
+needed. Successive update costs are dependent because they act on the
+same evolving tree.
 
-\paragraph{Scope and proof strategy.}
-We treat each fixed positive reinforcement parameter. The expected
-total number of root-state changes is finite, a property used to
-control the contribution of large fringes to the execution history.
-A size-conditioned approximation then permits a Gaussian limit for
-the full cumulative cost. We do not assert estimates uniform as
-reinforcement tends to zero.
+\paragraph{Contribution.}
+Our contribution is a probabilistic analysis of this execution history.
+The algorithm and its matching recurrence are classical.
+For a tree grown to $N$ vertices, we establish three levels of control:
+\begin{itemize}
+\item A single update has bounded expected cost and a limiting law with
+sharp factorial tails; the expected number of changed matching edges
+is also bounded.
+\item Total vertex inspections have a linear mean, an explicit constant
+mean correction, and Gaussian fluctuations of order $\sqrt N$, with
+a strictly positive limiting variance coefficient.
+\item The largest update grows as $\log N/\log\log N$. More precisely,
+it eventually stays almost surely within a bounded distance of an
+explicit centering, giving a second-order asymptotic expansion.
+\end{itemize}
+Thus the results describe both typical cumulative work and rare large
+updates of exact matching maintenance under reinforcement.
 
 \paragraph{Related work.}
-The static matching recurrence is classical and appears through its
-independence-number counterpart in Janson~\cite{Janson2020}; that work
-also studies preferential trees. Our random variable is the execution
-history of repeated maintenance, rather than the optimum of one final
-tree. Gupta and Sharma~\cite{GuptaSharma2009} give an $O(\log n)$
-worst-case update algorithm for matching cardinality on arbitrary
-dynamic trees. Our analysis concerns a simpler local algorithm under a
-specified random insertion law, and includes an explicit matching and
-edge recourse. The increasing-tree fringe estimates of Seelbach
-Benkner and Wagner~\cite{SeelbachWagner2022} and the
-additive-functional CLT of Ralaivaosaona and Wagner
-\cite{RalaivaosaonaWagner2019} are inputs. To apply the latter to an
-unbounded history score, we prove a size-centered variance estimate;
-four-vertex resampling establishes nonzero limiting variance.
+Acar et al.~\cite{AcarEtAl2004} develop a general framework for
+propagating input changes through computations, with applications to
+dynamic trees. For exact matching cardinality, Gupta and
+Sharma~\cite{GuptaSharma2009} give an $O(\log n)$ worst-case update
+algorithm on arbitrary dynamic trees. In the incremental model,
+Tirodkar and Vishwanathan~\cite{TirodkarVishwanathan2019} obtain
+constant worst-case update time with a randomized $3/2$-approximation
+in expectation on trees. Our guarantees concern an exact local
+algorithm under a specified random insertion law; they do not improve
+these bounds for arbitrary update sequences.
+
+The affine model belongs to the increasing-tree growth families
+characterized by Panholzer and Prodinger~\cite{PanholzerProdinger2007}.
+Rudas, T\'oth and Valk\'o~\cite{RudasTothValko2007} place preferential
+tree growth in a general branching-process framework. Janson
+\cite{Janson2020} studies independence numbers, and hence matching
+sizes, in random trees including preferential trees; his recurrence
+also supplies the static basis for our algorithm. The parameter here
+records the work across all insertion times, not only the optimum in
+the final tree.
+
+\paragraph{Why additional analysis is needed.}
+The increasing-tree fringe estimates of Seelbach Benkner and Wagner
+\cite{SeelbachWagner2022} and the additive-functional central limit
+theorem of Ralaivaosaona and Wagner~\cite{RalaivaosaonaWagner2019}
+are inputs. Applying the latter requires control of an unbounded
+history score. We prove a variance estimate after centering at each
+subtree size, and a local resampling argument establishes positive
+limiting variance. For the maximum, we control counts of small
+subtrees that certify a large update, addressing dependence between
+insertion times. These arguments use fixed positive reinforcement;
+we do not claim estimates uniform as $\beta$ tends to zero.
 
 \section{Model, algorithm, and results}\label{sec:model}
 
@@ -654,6 +685,13 @@ further work.
 \clearpage
 \begin{thebibliography}{9}
 
+\bibitem{AcarEtAl2004}
+Acar, U.A., Blelloch, G.E., Harper, R., Vittes, J.L., Woo, S.L.M.:
+Dynamizing static algorithms, with applications to dynamic trees and
+history independence. In: Proceedings of the Fifteenth Annual ACM--SIAM
+Symposium on Discrete Algorithms, pp. 524--533. SIAM (2004).
+\url{https://www.cs.cmu.edu/~guyb/papers/ABHVW04.pdf}
+
 \bibitem{GuptaSharma2009}
 Gupta, M., Sharma, A.:
 An $O(\log(n))$ fully dynamic algorithm for maximum matching in a tree.
@@ -662,20 +700,38 @@ arXiv:0901.2900 (2009). \url{https://arxiv.org/abs/0901.2900}
 \bibitem{Janson2020}
 Janson, S.:
 On the independence number of some random trees.
-arXiv:2003.08712 (2020). \url{https://arxiv.org/abs/2003.08712}
+Electronic Communications in Probability \textbf{25}, paper 63,
+1--14 (2020). \doi{10.1214/20-ECP345}
+
+\bibitem{PanholzerProdinger2007}
+Panholzer, A., Prodinger, H.:
+Level of nodes in increasing trees revisited.
+Random Structures \& Algorithms \textbf{31}(2), 203--226 (2007).
+\doi{10.1002/rsa.20161}
 
 \bibitem{RalaivaosaonaWagner2019}
 Ralaivaosaona, D., Wagner, S.:
 A central limit theorem for additive functionals of increasing trees.
 Combinatorics, Probability and Computing \textbf{28}(4), 618--637 (2019).
 \doi{10.1017/S0963548318000585}
-Extended abstract: \url{https://arxiv.org/abs/1605.03918}
+
+\bibitem{RudasTothValko2007}
+Rudas, A., T\'oth, B., Valk\'o, B.:
+Random trees and general branching processes.
+Random Structures \& Algorithms \textbf{31}(2), 186--202 (2007).
+\doi{10.1002/rsa.20137}
 
 \bibitem{SeelbachWagner2022}
 Seelbach Benkner, L., Wagner, S.:
 Distinct fringe subtrees in random trees.
 Algorithmica \textbf{84}, 3686--3728 (2022).
 \doi{10.1007/s00453-022-01013-y}
+
+\bibitem{TirodkarVishwanathan2019}
+Tirodkar, S., Vishwanathan, S.:
+Maximum matching on trees in the online preemptive and the incremental
+graph models. Algorithmica \textbf{81}, 4275--4292 (2019).
+\doi{10.1007/s00453-019-00593-6}
 
 \end{thebibliography}
 

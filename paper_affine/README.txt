@@ -7,9 +7,15 @@ Exact Matching under Affine Preferential Attachment:
 Update Laws, Gaussian Fluctuations, and Extremes
 Marek Gałązka, Adam Mickiewicz University, Poznań, Poland
 
-Standalone affine-attachment article: 10 main-text pages, 1 bibliography
-page, and 7 appendix pages (18 pages total in standard LNCS format).
+Standalone affine-attachment article: 11 main-text pages, 1 bibliography
+page, and 7 appendix pages (19 pages total in standard LNCS format).
 Main document: affine_matching.tex
+
+The introduction starts with the matching-maintenance problem in plain
+language, then states the contributions and distinguishes them from known
+algorithms and probabilistic tools. Eight references cover dynamic and
+incremental matching, preferential growth, increasing trees, and the
+specific fringe estimates and central limit theorem used in the proofs.
 
 Upload this ZIP to Overleaf and select affine_matching.tex, or run:
   latexmk -pdf -interaction=nonstopmode -halt-on-error affine_matching.tex

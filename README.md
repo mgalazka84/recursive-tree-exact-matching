@@ -6,7 +6,7 @@ Implementation and reproducibility code for two separate manuscripts by
 | Manuscript | Source | Scope |
 | --- | --- | --- |
 | **Exact Matching in Growing Recursive Trees with Constant Expected Update Cost** | [paper/recursive_matching.tex](paper/recursive_matching.tex) | Uniform recursive attachment; 12 pages including references and all proofs |
-| **Exact Matching under Affine Preferential Attachment: Update Laws, Gaussian Fluctuations, and Extremes** | [paper_affine/affine_matching.tex](paper_affine/affine_matching.tex) | Fixed positive reinforcement; 10 main-text pages, 1 references page, 7 appendix pages |
+| **Exact Matching under Affine Preferential Attachment: Update Laws, Gaussian Fluctuations, and Extremes** | [paper_affine/affine_matching.tex](paper_affine/affine_matching.tex) | Fixed positive reinforcement; 11 main-text pages, 1 references page, 7 appendix pages |
 
 The first source is restored **byte for byte** from pre-affine commit
 `fd72ed52a1eea379ccde2fedcd7cfa2c409d2b00`. The original uniform-experiment
