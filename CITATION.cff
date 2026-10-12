@@ -2,9 +2,9 @@ cff-version: 1.2.0
 repository-code: 'https://github.com/mgalazka84/recursive-tree-exact-matching'
 message: "Please cite the manuscript when using this implementation or its analysis."
 type: software
-title: "Exact Matching in Growing Recursive Trees: Reproducibility Code"
-version: 1.0.0
-date-released: 2026-10-11
+title: "Exact Matching in Growing Random Trees: Reproducibility Code"
+version: 1.1.0
+date-released: 2026-10-12
 authors:
   - family-names: "Gałązka"
     given-names: "Marek"
@@ -12,7 +12,7 @@ authors:
 license: MIT
 preferred-citation:
   type: unpublished
-  title: "Exact Matching in Growing Recursive Trees with Constant Expected Update Cost"
+  title: "Exact Matching in Growing Random Trees with Constant Expected Update Cost"
   authors:
     - family-names: "Gałązka"
       given-names: "Marek"

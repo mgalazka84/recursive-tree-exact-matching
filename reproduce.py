@@ -54,6 +54,13 @@ def main():
     run([build / 'test_matching'])
     run([build / 'demo'])
     run([sys.executable, ROOT / 'verification/verify_extensions.py'])
+    run([sys.executable, ROOT / 'verification/verify_preferential.py',
+         '--output', output / 'preferential_exact_checks.json'])
+    import json
+    with (output / 'preferential_exact_checks.json').open() as stream:
+        preferential_actual = json.load(stream)
+    with (ROOT / 'data/preferential_exact_checks.json').open() as stream:
+        assert preferential_actual == json.load(stream), 'Preferential exact results differ'
     if args.checks_only:
         print('All finite and API checks passed.', flush=True)
         return
