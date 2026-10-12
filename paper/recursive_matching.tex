@@ -29,18 +29,18 @@ Adam Mickiewicz University, Pozna\'n, Poland}
 
 \begin{abstract}
 We analyze standard local maintenance of an explicit maximum matching in
-growing trees. Under attachment with weight $1+\beta|\ch(v)|$ at
-vertex $v$, for every fixed $\beta\ge0$, the expected update
-time and recourse are constant, with linear space and constant-time
-queries. A coefficientwise comparison bounds the expected weighted root
-sensitivity by one. Ordinary degree-proportional attachment from an
-initial edge has expected inspection count at most $3/2$. For uniform
-attachment we obtain the exact mean $2-1/n$, the limiting update law,
-and an $L^1$ bound $O(N^{-1/3}(\log N)^{2/3})$ for total inspections
-normalized by $N$. The largest inspection count divided by
-$\log N/\log\log N$ converges in probability to one. For fixed
-$\beta>0$ we also prove a uniform tail
-$\exp\{-k\log k+O_\beta(k)\}$. Our contribution is the probabilistic
+growing trees. Under attachment with weight $1+\beta|\ch(v)|$,
+$\beta\ge0$, the expected update time and recourse are constant, with
+linear space and constant-time queries. A coefficientwise comparison
+bounds expected weighted root sensitivity by one. We identify the
+limiting update distribution throughout this family and prove that the
+largest inspection count divided by $\log N/\log\log N$ converges
+almost surely to one. Both results transfer to attachment proportional
+to $\deg(v)+\delta$, $\delta>-1$, from a seed edge; ordinary
+degree-proportional attachment has expected inspection count at most
+$3/2$. For uniform attachment we additionally obtain the exact mean
+$2-1/n$ and an $L^1$ bound $O(N^{-1/3}(\log N)^{2/3})$ for total
+inspections normalized by $N$. Our contribution is the probabilistic
 analysis of a known deterministic propagation scheme.
 \keywords{Dynamic graph algorithms \and Maximum matching \and Preferential attachment \and Recourse \and Average-case analysis}
 \end{abstract}
@@ -67,8 +67,9 @@ drives the local results; an additive representation of the execution
 history and long fringe paths yield the global ones. We then prove a
 coefficientwise sensitivity bound for every affine attachment weight
 $1+\beta\lvert\ch(v)\rvert$, $\beta\ge0$, and transfer it to
-ordinary degree-based attachment. This extension retains constant
-expected cost without uniform parent choices.
+ordinary degree-based attachment. The extension gives constant expected
+cost, a parameter-dependent limiting update law, and the same sharp
+first-order maximum throughout the family.
 
 \begin{figure}[t]
 \centering
@@ -135,8 +136,8 @@ tools and context, rather than claims of novelty here.
 
 Let $T_1$ consist of the root $1$. For $n\ge1$, obtain $T_{n+1}$ by adding
 vertex $n+1$ and the edge $\{P_{n+1},n+1\}$, where the variables
-$P_{n+1}$ are independent and uniform on $\{1,\ldots,n\}$. Sections~\ref{sec:model}--\ref{sec:maximum} use this uniform model;
-Section~\ref{sec:preferential} explicitly changes the attachment law.
+$P_{n+1}$ are independent and uniform on $\{1,\ldots,n\}$. Unless another law is explicitly specified, we use this uniform model;
+Section~\ref{sec:preferential} defines the nonuniform laws.
 The parent $P_{n+1}$ is supplied to the update algorithm. There are no deletions or
 edge weights. We use a word-RAM in which vertex identifiers and counters
 up to the current input size fit in a word.
@@ -504,48 +505,24 @@ requires a separate argument for the dependent execution history.
 
 \section{The sharp scale of the longest update}\label{sec:maximum}
 
-Long fringe paths force long updates somewhere in their own growth
-history. Together with the uniform tail bound, this determines the
-first-order asymptotics of the maximum inspection count.
+Long fringe paths force long updates somewhere in their growth history.
+Together with the uniform tail bounds, they determine the first-order
+maximum for all the attachment laws considered here.
 
 \begin{theorem}\label{thm:maximum}
 Let $W_N=\max_{1\le n<N}U_n$ and
-$\ell_N=\log N/\log\log N$. Then
+$\ell_N=\log N/\log\log N$. Under uniform attachment, under
+\eqref{eq:affineparent} for any fixed $\beta\ge0$, and under the
+seed-edge law of Corollary~\ref{cor:degree} for any fixed $\delta>-1$,
 \begin{equation}\label{eq:sharpmaximum}
- \frac{W_N}{\ell_N}\xrightarrow{\mathbb P}1.
+ \frac{W_N}{\ell_N}\xrightarrow{\mathrm{a.s.}}1.
 \end{equation}
 \end{theorem}
-\begin{proof}
-Fix $0<\varepsilon<1$. By $U_n\le K_n+1$, the union bound and
-\eqref{eq:strongtail}, with $h=(1+\varepsilon)\ell_N-1$ rounded up,
-\[
- \PP\bigl(W_N>(1+\varepsilon)\ell_N\bigr)
- \le N\exp\{-h\log h+h\log\log h+O(h)\}
- =N^{-\varepsilon+o(1)}.
-\]
-For the lower bound let $X_{N,k}$ count fringe subtrees that are paths
-of $k$ vertices rooted at an endpoint. Exactly one of the $(k-1)!$
-recursive trees of size $k$ is such a path. Thus
-Lemma~\ref{lem:fringevariance}, with $f$ its indicator, gives
-\[
- \mu_{N,k}:=\E X_{N,k}=\frac{N}{(k+1)k!},\qquad
- \operatorname{Var}(X_{N,k})\le\mu_{N,k}\quad(N>2k).
-\]
-Set $k=\lceil(1-\varepsilon)\ell_N\rceil+1$. Stirling's formula
-implies $\log\mu_{N,k}=\varepsilon\log N+o(\log N)$, so Chebyshev's
-inequality yields
-\[
- \PP(X_{N,k}=0)\le\mu_{N,k}^{-1}=N^{-\varepsilon+o(1)}.
-\]
-If such a fringe path occurs in $T_N$, consider the insertion of its
-terminal vertex. Immediately before that insertion, the other $k-1$
-vertices form a fringe path: no extra branch could have disappeared
-later, since there are no deletions. Adding the terminal leaf flips
-every state on this path, so that update has $K_n\ge k-1$ and
-$U_n\ge k-1$. Hence $W_N\ge(1-\varepsilon)\ell_N$ whenever
-$X_{N,k}>0$. Combining the bounds proves \eqref{eq:sharpmaximum}.
-\end{proof}
-
+The proof is in Appendix~\ref{app:affinemaximum}. The lower bound uses
+fringe paths of size about $(1-\varepsilon)\ell_N$, a uniform variance
+estimate for subtree counts, and the fact that inserting the terminal
+vertex of such a path flips every preceding state. For the seed-edge
+model we take $U_1=1$ for the deterministic creation of that edge.
 
 \section{Affine preferential attachment}\label{sec:preferential}
 
@@ -647,6 +624,8 @@ For $n\ge2$,
 \end{equation}
 In particular, ordinary degree-proportional attachment ($\delta=0$)
 has $\E U_n\le3/2$. Update time and recourse have constant expectation.
+Theorems~\ref{thm:maximum} and~\ref{thm:affinelimit} also hold for
+this model, using $\beta=1/(1+\delta)$ in the latter.
 \end{corollary}
 \begin{proof}
 Every nonroot fringe subtree uses weights
@@ -657,10 +636,43 @@ weight is $(2+\delta)n-2$. Since $U_n$ is one plus the number of
 changed nonroot vertices, summing their sensitivities proves
 \eqref{eq:degreemean}. Finally $K_n\le U_n$ and
 Lemma~\ref{lem:implementation} give constant expected recourse.
+The distributional and maximum claims are proved by the two-component
+comparison in Appendices~\ref{app:affinelimit} and~\ref{app:affinemaximum}.
 \end{proof}
 
-The exact uniform limiting law, cumulative concentration rate, and
-sharp maximum lower bound are not asserted for these nonuniform models.
+\paragraph{The limiting update law.}
+Fix $\beta>0$, set $\zeta=(1+\beta)^{-1}$, and use the functions
+$\phi,A_1$ determined by \eqref{eq:affineodes}. Put
+\begin{equation}\label{eq:affinelimitfunctions}
+ \begin{gathered}
+ H(z)=\int_0^z\phi'(A_1(t))\,dt,\\
+ \Phi_\beta(s)=\zeta\int_0^1(1-x)^{\zeta-1}
+       \frac{e^{sH(\zeta x)}-1}{s}\,dx,
+ \end{gathered}
+\end{equation}
+where the quotient at $s=0$ means $H(\zeta x)$.
+
+\begin{theorem}\label{thm:affinelimit}
+Under \eqref{eq:affineparent} with fixed $\beta>0$, there is a
+nonnegative integer-valued $K_\beta$ such that
+$K_n\xrightarrow{d}K_\beta$ and $U_n\xrightarrow{d}K_\beta+1$.
+For $s\ge0$ and integers $k\ge1$,
+\begin{align}
+ \E s^{K_\beta}&=1+(s-1)\Phi_\beta(s),\label{eq:affinelimitpgf}\\
+ \PP(K_\beta\ge k)&=\frac{\zeta}{k!}\int_0^1
+ (1-x)^{\zeta-1}H(\zeta x)^k\,dx.\label{eq:affinelimittails}
+\end{align}
+Every fixed polynomial moment converges, as does $\E s^{K_n}$ for
+each fixed $s>0$. In particular,
+$\E K_n\to\Phi_\beta(1)\le\zeta$ and
+$\E U_n\to1+\Phi_\beta(1)$.
+\end{theorem}
+The proof, a sharp asymptotic for \eqref{eq:affinelimittails}, and
+certified finite-sum approximations are in
+Appendix~\ref{app:affinelimit}. At $\beta=0$, substituting
+$\zeta=1$ and $H(z)=\log(1+\R(z))$ in
+\eqref{eq:affinelimitfunctions} recovers Theorem~\ref{thm:limit}.
+Cumulative concentration for preferential attachment remains open here.
 
 \section{Reproducible checks and finite-size behavior}\label{sec:experiments}
 
@@ -676,7 +688,9 @@ recomputes states after all 46,233 insertions into the 5,914 increasing
 trees of sizes 1--8, for
 $\beta\in\{0,1/10,1/4,1/2,1,2,10\}$. It verifies the weighted
 sensitivity, marked EGFs, fringe identity, and mean bounds, including
-coefficient domination through degree 24. Four values
+coefficient domination through degree 24. It also checks every finite
+update-tail coefficient, the exact fringe-path thinning identities,
+and the pointwise comparison with the two seed-edge components. Four values
 $\delta\in\{-1/2,0,1,3\}$ check Corollary~\ref{cor:degree}.
 
 We generated 32 independent trajectories to $N=10^6$ using
@@ -733,9 +747,9 @@ Standard matching propagation admits exact update means, a limiting
 law, cumulative linear cost, and a sharp first-order maximum under
 uniform recursive growth. A coefficientwise comparison extends constant
 expected maintenance to all nonnegative affine reinforcement and to
-ordinary degree-based attachment. For preferential models, sharper
-means, cumulative concentration, and a matching maximum lower bound
-remain open here, as do edge weights and a central limit theorem.
+ordinary degree-based attachment, with a limiting update law and sharp
+first-order maximum for both conventions. For preferential models, cumulative concentration and second-order maximum asymptotics remain
+open here, as do edge weights and a central limit theorem.
 
 \clearpage
 \begin{thebibliography}{9}
@@ -1005,5 +1019,206 @@ on $\beta$ and the requested polynomial failure exponent.
 No independence of successive costs is assumed. Constants here need
 not stay bounded as $\beta\downarrow0$; that boundary case is covered
 by the separate uniform-attachment proof.
+
+
+\section{The preferential limiting law}\label{app:affinelimit}
+
+\begin{proof}[Proof of Theorem~\ref{thm:affinelimit}]
+Fix $\beta>0$ and $s>0$, and retain the notation of
+Appendix~\ref{app:affinetails}. The series
+$\sum_{j\ge1}j b_j(s)\zeta^{j-1}=\partial_z C(\zeta,s)$ converges.
+The last term in \eqref{eq:affineF} is at most
+$n b_n(s)\zeta^{n-1}$, and therefore tends to zero. The other terms
+are nonnegative. The beta-integral identity
+\[
+ d_j:=\frac{\zeta\Gamma(\zeta)j!}{\Gamma(j+1+\zeta)}
+   =\zeta\int_0^1x^j(1-x)^{\zeta-1}\,dx
+\]
+and termwise integration yield
+\[
+ F_{n,\beta}(s)\longrightarrow
+ \sum_{j\ge1}d_j b_j(s)\zeta^j
+ =\zeta\int_0^1(1-x)^{\zeta-1}C(\zeta x,s)\,dx
+ =\Phi_\beta(s).
+\]
+Since $H(\zeta)<\infty$, this integral is continuous at $s=1$.
+The geometric-sum identity and the continuity theorem for probability
+generating functions prove convergence to \eqref{eq:affinelimitpgf}.
+Uniform exponential-moment bounds \eqref{eq:affinepgfbound} imply
+uniform integrability of every fixed polynomial moment. The root
+changes with probability at most $1/Z_n$, by
+\eqref{eq:affinesensitivity}; hence $U_n=K_n+1-R_n$ gives the
+assertions for $U_n$. At $s=0$, point-probability convergence and
+continuity give the same formula.
+
+Expanding $(e^{sH}-1)/s$ in nonnegative powers of $s$ and comparing
+coefficients in
+$\Phi_\beta(s)=\sum_{k\ge1}\PP(K_\beta\ge k)s^{k-1}$ proves
+\eqref{eq:affinelimittails}. Finally, convergence of the means and
+\eqref{eq:affinemeans} give $\Phi_\beta(1)\le\zeta$.
+\end{proof}
+
+\paragraph{Sharp limiting tails.}
+Write $H_\beta=H(\zeta)$ and $h_\beta=H'(\zeta)$, both finite and
+positive. Then, as $k\to\infty$,
+\begin{equation}\label{eq:affinelimitsharp}
+ \PP(K_\beta\ge k)\sim
+ \Gamma(1+\zeta)\left(\frac{H_\beta}{\zeta h_\beta}\right)^\zeta
+ \frac{H_\beta^k}{k!\,k^\zeta}.
+\end{equation}
+Indeed, $H(\zeta x)=H_\beta-\zeta h_\beta(1-x)+o(1-x)$.
+In \eqref{eq:affinelimittails}, put $y=1-x$ and scale $y$ by $1/k$.
+For small $y$, the ratio $H(\zeta(1-y))/H_\beta$ is at most
+$\exp(-cy)$ for some $c>0$; on a fixed interval away from zero it
+is bounded strictly below one. Dominated convergence on the scaled
+integral therefore gives
+$\Gamma(\zeta)(H_\beta/(\zeta h_\beta k))^\zeta$ after extracting
+$H_\beta^k$. Multiplication by $\zeta/k!$ proves
+\eqref{eq:affinelimitsharp}. This assertion is for fixed $\beta>0$.
+
+\paragraph{Certified approximation.}
+Formula \eqref{eq:affineF} also yields rational interval bounds when
+$\beta$ is rational. For either $D(z)=C(z,1)$ or
+$D(z)=H(z)^k/k!$, write $d_j$ as above and truncate
+$\sum_{j\ge1}d_j\zeta^j[z^j]D$ at $j=L$. This gives a lower bound
+for $\E K_\beta$ or $\PP(K_\beta\ge k)$, respectively. Since
+$0\preceq H^k/k!\preceq C(z,1)\preceq\mathcal T(z)$,
+its remainder is at most
+\begin{equation}\label{eq:affinecertified}
+ \sum_{j>L}d_j\zeta^j[z^j]\mathcal T
+ =\sum_{j>L}\frac{\zeta^2}{(j-1+\zeta)(j+\zeta)}
+ =\frac{\zeta^2}{L+\zeta}.
+\end{equation}
+The checker implements these bounds in exact rational arithmetic.
+The same truncation argument applies to the uniform boundary case.
+
+\paragraph{Transfer to the seed-edge model.}
+We prove the distributional part of Corollary~\ref{cor:degree}.
+Delete the seed edge $\{a,b\}$ and regard the two components as
+rooted at $a,b$. Every vertex, including each component root, has
+one incident edge outside its set of children in this forest. Thus
+its attachment weight is
+$(1+\delta)+|\ch(v)|$, and division by $1+\delta$ gives
+\eqref{eq:affineparent} with $\beta=1/(1+\delta)$.
+A component of size $m$ has normalized weight $Z_m$.
+
+Construct two independent infinite affine growth histories and an
+independent allocation process. At component sizes $(m_1,m_2)$,
+choose component $i$ with probability $Z_{m_i}/(Z_{m_1}+Z_{m_2})$
+and reveal its next insertion. This generates exactly the seed-edge
+law. In particular, conditional on component sizes, their internal
+histories have the corresponding independent affine laws. At global
+size $n$, the total normalized weight is
+$Z_{m_1}+Z_{m_2}=(1+\beta)n-2\beta$.
+
+Let $K_n^F,U_n^F$ be the update counts when propagation stops at the
+root of the selected component. The probability of selecting a
+component of size less than any fixed $L$ is at most
+$2Z_L/((1+\beta)n-2\beta)$, which tends to zero. Conditioning on
+component sizes and applying Theorem~\ref{thm:affinelimit} therefore
+shows $K_n^F\xrightarrow{d}K_\beta$ and
+$U_n^F\xrightarrow{d}K_\beta+1$.
+
+Root the full tree at $a$. For an insertion in its component,
+$U_n=U_n^F$; for one in the component at $b$,
+$U_n=U_n^F+R_n^F$, where $R_n^F$ indicates a change at $b$.
+In either case $|K_n-K_n^F|\le1$, and a difference in either count
+requires the selected component root to change. By
+\eqref{eq:affinesensitivity}, that event has probability at most
+$2/((1+\beta)n-2\beta)$. Hence the full-tree counts have the same
+limits. Moreover $K_n\le K_n^F+1$, so uniform exponential-moment
+bounds persist. Uniform integrability, using a larger fixed
+exponential moment when necessary, proves convergence of the
+polynomial moments and the PGFs for every fixed $s>0$.
+
+\section{The sharp maximum for all attachment laws}\label{app:affinemaximum}
+
+\begin{proof}[Proof of Theorem~\ref{thm:maximum} for one-root laws]
+Fix $\beta\ge0$. The uniform case has the tail bound
+\eqref{eq:strongtail}, while $\beta>0$ has
+\eqref{eq:affinetail}. For any fixed $\varepsilon>0$, a union bound
+with $U_n\le K_n+1$ gives
+\[
+ \PP\bigl(W_N>(1+\varepsilon)\ell_N\bigr)
+ \le N^{-\varepsilon+o(1)}.
+\]
+It remains to prove the lower bound. Put $q=\beta/(1+\beta)$ and
+$\zeta=1-q$. Let $X_{N,k}$ count fringe subtrees that are paths
+rooted at an endpoint. Their probability in a size-$k$ affine tree is
+\[
+ \pi_k=\frac1{\tau_k},\qquad
+ \tau_k=\prod_{j=1}^{k-1}((1+\beta)j-\beta),
+\]
+because every insertion forming the path has attachment weight one.
+Thus \eqref{eq:affinefringe}, also valid at $\beta=0$, gives
+\begin{equation}\label{eq:affinepathmean}
+ \mu_{N,k}:=\E X_{N,k}
+ =\frac{(N-q)\zeta\pi_k}{(k-q)(k+1-q)}\qquad(k<N).
+\end{equation}
+We need a variance bound uniform in growing $k$. The standard
+subtree-size estimate~\cite[Lemma~3]{SeelbachWagner2022} states
+\[
+ \operatorname{Var}(N_{N,k})=O_\beta(N/k^2)
+ \quad\text{uniformly for }1\le k<N.
+\]
+Conditional on the vertex sets of all size-$k$ fringes and the
+contracted tree, their interiors are independent size-$k$ affine
+trees. To see this, replace each interior by an arbitrary increasing
+tree on the same labels. This preserves the conditioning, and the
+history weight factors into the separate interior weights and an
+unchanged exterior weight. Consequently
+$X_{N,k}\mid N_{N,k}\sim\operatorname{Bin}(N_{N,k},\pi_k)$ and
+\begin{align*}
+ \operatorname{Var}(X_{N,k})
+ &=\pi_k^2\operatorname{Var}(N_{N,k})
+   +\pi_k(1-\pi_k)\E N_{N,k}\\
+ &=O_\beta(\pi_k N/k^2)=O_\beta(\mu_{N,k}).
+\end{align*}
+This uses the size-uniform bound, which applies at the scale
+$k\asymp\log N/\log\log N$.
+
+Set $k=\lceil(1-\varepsilon)\ell_N\rceil+1$, with
+$0<\varepsilon<1$. Since
+\[
+ \tau_k=(1+\beta)^{k-1}
+       \frac{\Gamma(k-q)}{\Gamma(1-q)},\qquad
+ \log\tau_k=k\log k+O_\beta(k),
+\]
+we have $\log\mu_{N,k}=\varepsilon\log N+o(\log N)$.
+Chebyshev's inequality and the variance bound give
+$\PP(X_{N,k}=0)\le N^{-\varepsilon+o(1)}$.
+If such a fringe path exists in $T_N$, immediately before insertion
+of its terminal vertex the preceding $k-1$ vertices form a fringe
+path: an extra branch could not have disappeared. That insertion
+flips all $k-1$ old states. Hence $W_N\ge k-1$, proving the lower
+bound in probability.
+
+Both failure bounds are summable along $N=2^j$. The first
+Borel--Cantelli lemma, applied for every rational $0<\varepsilon<1$,
+gives $W_{2^j}/\ell_{2^j}\to1$ almost surely. Since $W_N$ is
+nondecreasing and $\ell_{2^{j+1}}/\ell_{2^j}\to1$, interpolation
+between consecutive powers of two proves \eqref{eq:sharpmaximum}.
+No independence of the update costs is needed.
+\end{proof}
+
+\paragraph{The seed-edge law.}
+Use the independent component construction in
+Appendix~\ref{app:affinelimit}, with $\beta=1/(1+\delta)$.
+Let $W_m^{(i)}$ be the maximum inspection count within the first $m$
+vertices of component $i$, with $W_1^{(i)}=0$. At global size $N$,
+write the two component sizes as $m_1+m_2=N$ and put
+$W_N^F=\max\{W_{m_1}^{(1)},W_{m_2}^{(2)}\}$.
+The pointwise comparison, including $U_1=1$ for the seed edge, gives
+\[
+ W_N^F\le W_N\le W_N^F+1.
+\]
+Work on the probability-one event where the one-root maximum law
+holds for both infinite component histories. For the upper bound,
+$W_N^F\le\max\{W_N^{(1)},W_N^{(2)}\}$. For the lower bound, at
+least one component has size $m\ge N/2$; its maximum satisfies the
+one-root law as $m\to\infty$. Since
+$\ell_m/\ell_N\to1$ uniformly for $N/2\le m\le N$, the two
+bounds give the almost-sure limit.
+This proves \eqref{eq:sharpmaximum} for every fixed $\delta>-1$.
 
 \end{document}

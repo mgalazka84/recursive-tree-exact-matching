@@ -3,6 +3,9 @@
 Enumerate increasing labelled trees and recompute states after every possible
 insertion, independently of the sensitivity recurrence. Compare weighted sums
 with the formal differential equations and the affine fringe identity.
+Also check every finite update-tail probability, fringe-path thinning,
+and the pathwise comparison with the two components of a seed-edge tree.
+Rational truncations give certified intervals for the limiting law.
 These finite checks supplement, and do not replace, the proofs.
 """
 from fractions import Fraction as F
@@ -49,7 +52,7 @@ def series(beta, degree):
     one = [x - y for x, y in zip(tree, zero)]
     hprime = phi(one, beta, 1 + beta, degree - 1)
     h = [F(0)] + [x / (j + 1) for j, x in enumerate(hprime)]
-    marked = {}
+    marked = {0: h}
     for s in (1, 2, 3):
         exp = phi(h, F(0), F(s), degree)
         exp[0] -= 1
@@ -57,6 +60,49 @@ def series(beta, degree):
     assert all(x <= y for x, y in zip(marked[1], tree))
     assert beta or marked[1] == tree
     return tree, marked
+
+
+def fringe_statistics(children):
+    n = len(children)
+    sizes, paths = [1] * n, [True] * n
+    counts, path_counts = [0] * (n + 1), [0] * (n + 1)
+    for v in reversed(range(n)):
+        sizes[v] = 1 + sum(sizes[u] for u in children[v])
+        paths[v] = len(children[v]) <= 1 and all(paths[u] for u in children[v])
+        counts[sizes[v]] += 1
+        path_counts[sizes[v]] += int(paths[v])
+    return counts, path_counts
+
+
+def fringe_average(beta, n, value):
+    q = beta / (1 + beta)
+    total = sum((n - q) * (1 - q) / ((j - q) * (j + 1 - q)) * value(j)
+                for j in range(1, n)) + value(n)
+    return total / ((1 + beta) * n - beta)
+
+
+def tail_series(h, max_k, degree):
+    power = [F(1)] + [F(0)] * degree
+    out = {}
+    for k in range(1, max_k + 1):
+        power = mul(power, h, degree)
+        out[k] = [x / factorial(k) for x in power]
+    return out
+
+
+def certified_limit_interval(beta, coefficients, upper_cap):
+    """Nonnegative truncation plus the proved coefficient-majorant remainder."""
+    zeta = 1 / (1 + beta)
+    degree = len(coefficients) - 1
+    d, zpower, lower = F(1), F(1), F(0)
+    for j in range(1, degree + 1):
+        d *= F(j) / (j + zeta)
+        zpower *= zeta
+        lower += d * zpower * coefficients[j]
+    error = zeta ** 2 / (degree + zeta)
+    upper = min(upper_cap, lower + error)
+    assert 0 <= lower <= upper
+    return {"lower": rational(lower), "upper": rational(upper)}
 
 
 def states(children):
@@ -75,6 +121,13 @@ def tree_records(n):
             children[parents[v]].append(v)
             depth[v] = depth[parents[v]] + 1
         old = states(children)
+        if n >= 2:
+            forest = [list(xs) for xs in children]
+            forest[0].remove(1)
+            forest_old = states(forest)
+            component = [0, 1] + [0] * (n - 2)
+            for v in range(2, n):
+                component[v] = component[parents[v]]
         costs = []
         for p in range(n):
             augmented = [list(xs) for xs in children] + [[]]
@@ -83,7 +136,16 @@ def tree_records(n):
             changed = sum(x != y for x, y in zip(old, new))
             root = int(old[0] != new[0])
             costs.append((changed, changed + 1 - root, root))
-        yield parents, [len(xs) for xs in children], depth, costs
+            if n >= 2:
+                forest_augmented = [list(xs) for xs in forest] + [[]]
+                forest_augmented[p].append(n)
+                forest_new = states(forest_augmented)
+                kf = sum(a != b for a, b in zip(forest_old, forest_new))
+                rf = int(forest_old[component[p]] != forest_new[component[p]])
+                uf = kf + 1 - rf
+                assert abs(changed - kf) <= rf
+                assert changed + 1 - root == uf + (rf if component[p] == 1 else 0)
+        yield parents, [len(xs) for xs in children], depth, costs, fringe_statistics(children)
 
 
 def history_weight(parents, parameter, ordinary_degree=False):
@@ -109,12 +171,15 @@ def verify(max_n=8, series_degree=24):
     betas = tuple(map(F, ("0", "1/10", "1/4", "1/2", "1", "2", "10")))
     deltas = tuple(map(F, ("-1/2", "0", "1", "3")))
     formal = {b: series(b, series_degree) for b in betas}
-    rows, degree_rows = [], []
+    tails = {b: tail_series(formal[b][1][0], max_n, series_degree) for b in betas}
+    rows, degree_rows, fringe_rows = [], [], []
     tree_count = update_count = 0
     for n in range(1, max_n + 1):
         sums = {b: [0] * 8 for b in betas}
         degree_sums = {d: [0] * 3 for d in deltas}
-        for parents, children, depths, costs in tree_records(n):
+        path_sums = {b: [[0] * 4 for _ in range(n + 1)] for b in betas}
+        histograms = {b: [0] * (n + 1) for b in betas}
+        for parents, children, depths, costs, (nk, xk) in tree_records(n):
             tree_count += 1
             update_count += n
             for b in betas:
@@ -122,8 +187,12 @@ def verify(max_n=8, series_degree=24):
                 w = history_weight(parents, b)
                 total = sums[b]
                 total[0] += w
+                for k in range(1, n + 1):
+                    for j, x in enumerate((nk[k], nk[k] ** 2, xk[k], xk[k] ** 2)):
+                        path_sums[b][k][j] += w * x
                 for p, (k, u, root) in enumerate(costs):
                     mass = w * (den + a * children[p])
+                    histograms[b][k] += mass
                     total[1] += mass * k
                     total[2] += mass * u
                     for offset, s in enumerate((1, 2, 3)):
@@ -162,6 +231,22 @@ def verify(max_n=8, series_degree=24):
                 ) + ebs
                 exact_f = ek if s == 1 else F(total[5 + offset], normalization * zn_integer)
                 assert exact_f == fringe_sum / zn, (b, n, s, "fringe identity")
+            for k in range(1, n + 1):
+                enumerated_tail = F(sum(histograms[b][k:]), normalization * zn_integer)
+                predicted_tail = fringe_average(b, n, lambda j: tails[b][k][j] / tree[j])
+                assert enumerated_tail == predicted_tail, (b, n, k, "finite update tail")
+                en, en2, ex, ex2 = [F(x, normalization) for x in path_sums[b][k]]
+                pi = F(1) / prod((1 + b) * i - b for i in range(1, k))
+                vn, vx = en2 - en ** 2, ex2 - ex ** 2
+                assert ex == pi * en
+                assert vx == pi ** 2 * vn + pi * (1 - pi) * en
+                if k < n:
+                    q = b / (1 + b)
+                    assert en == (n - q) * (1 - q) / ((k - q) * (k + 1 - q))
+                if n == max_n:
+                    fringe_rows.append({"beta": str(b), "n": n, "k": k,
+                                        "path_probability": rational(pi),
+                                        "E_paths": rational(ex), "Var_paths": rational(vx)})
             rows.append({"beta": str(b), "n": n, "E_B": rational(eb), "E_K": rational(ek), "E_U": rational(eu)})
         for d, total in degree_sums.items():
             if n < 2:
@@ -177,14 +262,27 @@ def verify(max_n=8, series_degree=24):
                 assert eu <= F(3, 2)
             degree_rows.append({"delta": str(d), "n": n, "E_K": rational(ek), "E_U": rational(eu), "U_bound": rational(bound)})
         print(f"n={n}: all affine and ordinary-degree checks passed", flush=True)
+    intervals = []
+    for b in betas:
+        zeta = 1 / (1 + b)
+        intervals.append({"beta": str(b),
+                          "mean_K": certified_limit_interval(b, formal[b][1][1], zeta),
+                          "tail_probabilities": {
+                              str(k): certified_limit_interval(b, tails[b][k], F(1))
+                              for k in range(1, max_n + 1)}})
     return {"max_n": max_n, "series_degree": series_degree,
             "distinct_labelled_trees": tree_count, "distinct_insertions": update_count,
             "beta_values": list(map(str, betas)), "delta_values": list(map(str, deltas)),
             "arithmetic": "exact fractions and integer history weights",
             "checks": ["normalization", "independent state recomputation", "weighted root sensitivity",
                        "three marked generating functions", "affine fringe identity", "per-update bounds",
-                       "formal coefficient domination", "ordinary-degree seed-edge corollary"],
-            "affine_outdegree": rows, "ordinary_degree": degree_rows}
+                       "formal coefficient domination", "ordinary-degree seed-edge corollary",
+                       "all finite update-tail coefficients", "fringe-path mean and variance thinning",
+                       "pointwise seed-edge forest comparison", "certified limiting-law intervals"],
+            "affine_outdegree": rows, "ordinary_degree": degree_rows,
+            "fringe_paths_at_max_n": fringe_rows,
+            "limiting_law_intervals": intervals,
+            "interval_remainder_bound": "zeta^2/(series_degree+zeta), zeta=1/(1+beta)"}
 
 
 if __name__ == "__main__":
