@@ -21,8 +21,12 @@ Upload this ZIP to Overleaf and select affine_matching.tex, or run:
   latexmk -pdf -interaction=nonstopmode -halt-on-error affine_matching.tex
 Alternatively run pdfLaTeX twice. Bibliography entries are embedded.
 llncs.cls is Springer LNCS v2.26 with its original notices retained.
-Figure 1 is an exact TikZ rendering of the three four-vertex histories used
-to prove positive variance. It has no external image dependency.
+Figure 1 introduces the problem with a before-and-after path example:
+one new leaf triggers five old-vertex inspections and replaces two matched
+edges by three. Thick edges identify the matching, and a double outline
+identifies the new vertex, so the diagram is also readable in grayscale.
+Figure 2 shows the three four-vertex histories used to prove positive
+variance. Both figures are exact TikZ drawings without external images.
 
 Model: parent weight 1 + beta * number_of_children, fixed beta > 0.
 The separate seed-edge model uses degree + delta, delta > -1, and maps to

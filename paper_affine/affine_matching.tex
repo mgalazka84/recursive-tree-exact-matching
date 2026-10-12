@@ -57,10 +57,50 @@ A matching pairs adjacent vertices so that no vertex belongs to two
 pairs. Suppose a tree grows one leaf at a time and we want as many
 pairs as possible after every insertion. One new vertex can trigger a
 chain of corrections, although the optimum number of pairs increases
-by at most one. How much work do these corrections require over the
+by at most one; Figure~\ref{fig:intro-update} shows a small example.
+How much work do these corrections require over the
 lifetime of the tree, and how large can a single update become?
 A bounded expected update cost gives an average budget, but leaves
 its fluctuations and the largest delay unresolved.
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}[
+ x=1cm,y=1cm,
+ vertex/.style={circle,draw=black!75,fill=white,line width=.5pt,
+                minimum size=5mm,inner sep=0pt,font=\small},
+ tree edge/.style={draw=black!45,line width=.5pt},
+ matched/.style={draw=blue!65!black,line width=1.8pt},
+ every node/.style={font=\small}]
+ \node[anchor=east] at (-.5,0) {(a) Before: 2 pairs};
+ \node[anchor=east] at (-.5,-1.05) {(b) After: 3 pairs};
+ \foreach \i/\x in {1/0,2/1.25,3/2.5,4/3.75,5/5} {
+   \node[vertex] (a\i) at (\x,0) {\i};
+   \node[vertex] (b\i) at (\x,-1.05) {\i};
+ }
+ \node[vertex,double,double distance=.7pt,fill=orange!15]
+   (b6) at (6.25,-1.05) {6};
+ \foreach \u/\v in {1/2,2/3,3/4,4/5}
+   \draw[tree edge] (a\u)--(a\v);
+ \foreach \u/\v in {1/2,2/3,3/4,4/5,5/6}
+   \draw[tree edge] (b\u)--(b\v);
+ \foreach \u/\v in {2/3,4/5}
+   \draw[matched] (a\u)--(a\v);
+ \foreach \u/\v in {1/2,3/4,5/6}
+   \draw[matched] (b\u)--(b\v);
+ \node[anchor=south,font=\scriptsize] at (0,.29) {root};
+ \node[anchor=south,font=\scriptsize] at (6.25,-.72) {new leaf};
+ \draw[->,>=stealth,draw=black!70,line width=.6pt]
+   (5,-1.70)--node[below,font=\scriptsize]
+   {inspect $5,4,3,2,1$ towards the root} (0,-1.70);
+\end{tikzpicture}
+\caption{An update chain in the standard local algorithm. Vertex 1 is
+the root; thick blue edges form the maintained maximum matching.
+Inserting leaf 6 makes the algorithm inspect all five old vertices:
+two matched edges are removed and three are added. The optimum
+matching size increases only from two to three.}
+\label{fig:intro-update}
+\end{figure}
 
 We study affine preferential attachment: vertices with more children
 are more likely to receive the next leaf. A vertex with $c$ children
